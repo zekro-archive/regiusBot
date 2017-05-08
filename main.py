@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord import Embed
 from discord import Member
@@ -15,7 +16,8 @@ client = discord.Client()
 # LISTENER
 
 @client.event
-async def on_ready():
+@asyncio.coroutine
+def on_ready():
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
@@ -23,9 +25,10 @@ async def on_ready():
 
 
 @client.event
-async def on_member_join(member):
-    await client.add_roles(member, discord.utils.get(member.server.roles, name="Devs"))
-    await client.send_message(member,   "**Hey, " + member.name + "!**\n\n"
+@asyncio.coroutine
+def on_member_join(member):
+    yield from client.add_roles(member, discord.utils.get(member.server.roles, name="Devs"))
+    yield from client.send_message(member,   "**Hey, " + member.name + "!**\n\n"
                                         "Welcome on our Discord Dev Server! You automatically got "
                                         "assigned the role *Devs*.\n"
                                         "Use the command `-dev` to get the languages you code in as roles for better"
@@ -33,13 +36,14 @@ async def on_member_join(member):
 
 
 @client.event
-async def on_message(message: Message):
+@asyncio.coroutine
+def on_message(message: Message):
     if message.author == client.user:
         return
 
     if (message.content.startswith("!info")):
         em = discord.Embed(title='Info', description='Python Discord Bot by zekro. \n© 2017 zekro Development', colour=discord.Color.green())
-        await client.send_message(message.channel, embed=em)
+        yield from client.send_message(message.channel, embed=em)
 
 
 client.run(SECRETS.token)
