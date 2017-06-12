@@ -1,4 +1,4 @@
-PREFIX = "!"
+PREFIX = ";"
 
 helpText = "**This bot is just here for assistance for zekroBot.**\n\n" \
                "Is the zekroBot is gone **offline**, use command `!start` to get him back alive.\n\n" \
