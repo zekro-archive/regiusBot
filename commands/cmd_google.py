@@ -2,6 +2,9 @@ import discord
 import STATICS
 
 
+description = "Create lmgtfy.com link"
+
+
 def ex(message, client):
     args = message.content.replace(STATICS.PREFIX + "lmgtfy ", "").split("|")
     if len(args) < 2:

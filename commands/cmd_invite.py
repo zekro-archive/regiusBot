@@ -1,6 +1,9 @@
 import discord
 
 
+description = "Enter bot ID witch the bot sends as invite link to zekro (Server Owner)"
+
+
 def ex(message, client):
     args = message.content.split(" ")
     if len(args) > 1:

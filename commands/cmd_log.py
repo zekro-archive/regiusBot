@@ -6,6 +6,9 @@ import requests
 import SECRETS
 
 
+description = "Show bot log"
+
+
 def ex(message, client):
     if not os.path.isfile("screenlog.0"):
         yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="File `screenlog.0` does not exist!"))
