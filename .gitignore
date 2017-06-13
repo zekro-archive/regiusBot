@@ -1,3 +1,4 @@
 SECRETS.py
 *.pyc
 __pycache__/SECRETS.cpython-36.pyc
+__pycache__/
