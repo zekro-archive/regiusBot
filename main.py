@@ -2,13 +2,24 @@ import asyncio
 from time import gmtime, strftime
 
 import discord
-from discord import Game
+from discord import Game, Server, Member
 
+import functions
 import SECRETS
 import STATICS
-from commands import cmd_help, cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log
+from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test
 
 client = discord.Client()
+
+cmdmap = {
+            "lmgtfy": cmd_google,
+            "invite": cmd_invite,
+            "log": cmd_log,
+            "restart": cmd_restart,
+            "start": cmd_start,
+            "dev": cmd_dev,
+            # "test": cmd_test
+        }
 
 
 # LISTENER
@@ -17,22 +28,26 @@ client = discord.Client()
 @asyncio.coroutine
 def on_ready():
     print("BOT STARTED\n-----------------")
-    members = discord.utils.get(client.servers, id="307084334198816769").member_count
-    yield from client.change_presence(game=Game(name="%s members | !help" % members))
+    yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
 
 
 @client.event
 @asyncio.coroutine
 def on_member_join(member):
-    members = discord.utils.get(client.servers, id="307084334198816769").member_count
-    yield from client.change_presence(game=Game(name="%s members | !help" % members))
+    yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
+    yield from functions.send_join_pm(member, client)
 
 
 @client.event
 @asyncio.coroutine
 def on_member_remove(member):
-    members = discord.utils.get(client.servers, id="307084334198816769").member_count
-    yield from client.change_presence(game=Game(name="%s members | !help" % members))
+    yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
+
+
+@client.event
+@asyncio.coroutine
+def on_member_update(before, after):
+    yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
 
 
 @client.event
@@ -40,24 +55,14 @@ def on_member_remove(member):
 def on_message(message):
     if message.content.startswith(STATICS.PREFIX):
         print(strftime("[%d.%m.%Y %H:%M:%S]", gmtime()) + " [COMMAND] \"" + message.content + "\" by " + message.author.name)
-
-    if message.content.startswith(STATICS.PREFIX + "start"):
-        yield from cmd_start.ex(message, client)
-
-    if message.content.startswith(STATICS.PREFIX + "restart"):
-        yield from cmd_restart.ex(message, client)
-
-    if message.content.startswith(STATICS.PREFIX + "help"):
-        yield from cmd_help.ex(message, client)
-
-    if message.content.startswith(STATICS.PREFIX + "invite"):
-        yield from cmd_invite.ex(message, client)
-
-    if message.content.startswith(STATICS.PREFIX + "lmgtfy"):
-        yield from cmd_google.ex(message, client)
-
-    if message.content.startswith(STATICS.PREFIX + "log"):
-        yield from cmd_log.ex(message, client)
+        invoke = message.content.split(" ")[0].replace(STATICS.PREFIX, "", 1)
+        command_string = ""
+        if invoke == "help":
+            for s in cmdmap.keys():
+                command_string += ":white_small_square:  **" + s + "**  -  `" + cmdmap.get(s).description + "`\n"
+            yield from client.send_message(message.author, STATICS.helpText + command_string)
+        else:
+            yield from cmdmap.get(invoke).ex(message, client)
 
 
 client.run(SECRETS.token)
