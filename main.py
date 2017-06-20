@@ -7,7 +7,7 @@ from discord import Game, Server, Member
 import functions
 import SECRETS
 import STATICS
-from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test
+from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix
 
 client = discord.Client()
 
@@ -18,7 +18,8 @@ cmdmap = {
             "restart": cmd_restart,
             "start": cmd_start,
             "dev": cmd_dev,
-            # "test": cmd_test
+            "prefix": cmd_prefix,
+            "test": cmd_test
         }
 
 
