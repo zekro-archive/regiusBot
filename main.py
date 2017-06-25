@@ -7,7 +7,7 @@ from discord import Game, Server, Member
 import functions
 import SECRETS
 import STATICS
-from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix
+from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd
 
 client = discord.Client()
 
@@ -19,6 +19,8 @@ cmdmap = {
             "start": cmd_start,
             "dev": cmd_dev,
             "prefix": cmd_prefix,
+            "dnd": cmd_dnd,
+            "afk": cmd_dnd,
             "test": cmd_test
         }
 
@@ -49,11 +51,13 @@ def on_member_remove(member):
 @asyncio.coroutine
 def on_member_update(before, after):
     yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
+    yield from cmd_dnd.check_status(before, after, client)
 
 
 @client.event
 @asyncio.coroutine
 def on_message(message):
+    yield from cmd_dnd.test(message, client)
     if message.content.startswith(STATICS.PREFIX):
         print(strftime("[%d.%m.%Y %H:%M:%S]", gmtime()) + " [COMMAND] \"" + message.content + "\" by " + message.author.name)
         invoke = message.content.split(" ")[0].replace(STATICS.PREFIX, "", 1)
@@ -64,6 +68,5 @@ def on_message(message):
             yield from client.send_message(message.author, STATICS.helpText + command_string)
         else:
             yield from cmdmap.get(invoke).ex(message, client)
-
 
 client.run(SECRETS.token)
