@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 import discord
+import time
+from discord import Server
 
 import STATICS
 
@@ -58,6 +60,14 @@ def ex(message, client):
 
     if args[0] == "edit":
 
+        if not message.author == message.server.owner:
+            msg = yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=("Sorry, but only the server owner (%s) is allowed to use this command." % message.server.owner.mention)))
+            yield from client.delete_message(message)
+            time.sleep(5)
+            yield from client.delete_message(msg)
+            return
+
+
         if len(args) < 3:
             yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=help))
             return
@@ -90,6 +100,13 @@ def ex(message, client):
 
 
     if args[0] == "remove":
+
+        if not message.author == message.server.owner:
+            msg = yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=("Sorry, but only the server owner (%s) is allowed to use this command." % message.server.owner.mention)))
+            yield from client.delete_message(message)
+            time.sleep(5)
+            yield from client.delete_message(msg)
+            return
 
         if len(args) < 2:
             yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=help))
