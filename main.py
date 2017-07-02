@@ -1,5 +1,4 @@
 import asyncio
-import threading
 from time import gmtime, strftime
 
 import discord
@@ -8,7 +7,8 @@ from discord import Game, Server, Member
 import functions
 import SECRETS
 import STATICS
-from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd
+from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
+    cmd_github, cmd_say
 
 client = discord.Client()
 
@@ -22,6 +22,9 @@ cmdmap = {
             "prefix": cmd_prefix,
             "dnd": cmd_dnd,
             "afk": cmd_dnd,
+            "github": cmd_github,
+            "git": cmd_github,
+            "say": cmd_say,
             "test": cmd_test
         }
 
