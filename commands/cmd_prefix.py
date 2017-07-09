@@ -1,5 +1,8 @@
+import os
 from pathlib import Path
 import discord
+import time
+from discord import Server
 
 import STATICS
 
@@ -8,7 +11,9 @@ description = "Register bot prefixes running in this server"
 
 help = "**USAGE:**\n" \
        ":white_small_square:  `!prefix list`\n" \
-       ":white_small_square:  `!prefix register <ID of bot> <prefix>`\n" \
+       ":white_small_square:  `!prefix add <ID of bot> <prefix>`\n" \
+       ":white_small_square:  `!prefix edit <ID of bot> <new prefix>`\n" \
+       ":white_small_square:  `!prefix remove <ID of bot>`\n" \
        ":white_small_square:  `!prefix test <prefix>`\n"
 
 
@@ -31,8 +36,12 @@ def ex(message, client):
 
         bot = discord.utils.get(message.server.members, id=args[1])
 
-        if not bot.bot:
-            yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
+        try:
+            if not bot.bot:
+                yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
+                return
+        except:
+            yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(),description="Please enter a valid ID of a bots user account."))
             return
 
         if Path(file).is_file():
@@ -47,6 +56,85 @@ def ex(message, client):
         w.write(args[1] + ":" + args[2] + "\n")
         w.close()
         yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.green(), description="Assigned prefix `%s` to bot %s." % (args[2], bot.mention)))
+
+
+    if args[0] == "edit":
+
+        if not message.author == message.server.owner:
+            msg = yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=("Sorry, but only the server owner (%s) is allowed to use this command." % message.server.owner.mention)))
+            yield from client.delete_message(message)
+            time.sleep(5)
+            yield from client.delete_message(msg)
+            return
+
+
+        if len(args) < 3:
+            yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=help))
+            return
+
+        bot = discord.utils.get(message.server.members, id=args[1])
+
+        try:
+            if not bot.bot:
+                yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
+                return
+        except:
+            yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(),description="Please enter a valid ID of a bots user account."))
+            return
+
+        before = ""
+        if Path(file).is_file():
+            readout = {}
+            for line in open(file).readlines():
+                readout[line.split(":")[0]] = line.split(":")[1].replace("\n", "")
+            if readout.keys().__contains__(args[1]):
+                before = readout[args[1]]
+                readout[args[1]] = args[2]
+                os.remove(file)
+                w = open(file, "w")
+                for k in readout.keys():
+                    w.write(k + ":" + readout[k] + "\n")
+                w.close()
+
+        yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.green(), description="Changed prefix from `%s` to `%s` of bot %s." % (before, args[2], bot.mention)))
+
+
+    if args[0] == "remove":
+
+        if not message.author == message.server.owner:
+            msg = yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=("Sorry, but only the server owner (%s) is allowed to use this command." % message.server.owner.mention)))
+            yield from client.delete_message(message)
+            time.sleep(5)
+            yield from client.delete_message(msg)
+            return
+
+        if len(args) < 2:
+            yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=help))
+            return
+
+        bot = discord.utils.get(message.server.members, id=args[1])
+
+        try:
+            if not bot.bot:
+                yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
+                return
+        except:
+            yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(),description="Please enter a valid ID of a bots user account."))
+            return
+
+        if Path(file).is_file():
+            readout = {}
+            for line in open(file).readlines():
+                readout[line.split(":")[0]] = line.split(":")[1].replace("\n", "")
+            if readout.keys().__contains__(args[1]):
+                del readout[args[1]]
+                os.remove(file)
+                w = open(file, "w")
+                for k in readout.keys():
+                    w.write(k + ":" + readout[k] + "\n")
+                w.close()
+
+        yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.green(), description="Removed entry of Bot %s." % (bot.mention)))
 
 
     if args[0] == "list":

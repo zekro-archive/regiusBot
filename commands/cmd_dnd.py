@@ -63,7 +63,7 @@ def test(message, client):
 
 def check_status(before, after, client):
 
-    channel = discord.utils.get(after.server.channels, name="general")
+    channel = discord.utils.get(after.server.channels, name="botlog")
 
     if before.status.__str__() != "dnd" and after.status.__str__() == "dnd":
         if (not map_dnd.__contains__(after)) and (not map_afk.__contains__(after)):

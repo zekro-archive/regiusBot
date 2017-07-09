@@ -1,4 +1,5 @@
 import asyncio
+import statistics
 from time import gmtime, strftime
 
 import discord
@@ -7,7 +8,9 @@ from discord import Game, Server, Member
 import functions
 import SECRETS
 import STATICS
-from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd
+from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
+    cmd_github, cmd_say, cmd_pmbc
+
 
 client = discord.Client()
 
@@ -21,7 +24,11 @@ cmdmap = {
             "prefix": cmd_prefix,
             "dnd": cmd_dnd,
             "afk": cmd_dnd,
-            "test": cmd_test
+            "github": cmd_github,
+            "git": cmd_github,
+            "say": cmd_say,
+            "test": cmd_test,
+            "pmbc": cmd_pmbc,
         }
 
 
@@ -32,6 +39,8 @@ cmdmap = {
 def on_ready():
     print("BOT STARTED\n-----------------")
     yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
+    statistics.server = list(client.servers)[0]
+    statistics.start()
 
 
 @client.event
@@ -68,5 +77,6 @@ def on_message(message):
             yield from client.send_message(message.author, STATICS.helpText + command_string)
         else:
             yield from cmdmap.get(invoke).ex(message, client)
+
 
 client.run(SECRETS.token)
