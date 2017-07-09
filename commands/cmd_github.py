@@ -12,16 +12,24 @@ help = "**USAGE:**\n" \
        ":white_small_square:  `!github get <@mention>`\n"
 
 
-def ex(message, client):
+file = "gitlinks.save"
 
-    file = "gitlinks.save"
+
+def get_links(f):
+
     links = {}
 
-    if path.isfile(file):
-        reader = open(file)
+    if path.isfile(f):
+        reader = open(f)
         for l in reader:
             links[l.split(":::")[0]] = l.split(":::")[1][:-1]
         reader.close()
+    return links
+
+
+def ex(message, client):
+
+    links = get_links(file)
 
     args = message.content.split(" ")[1:]
 

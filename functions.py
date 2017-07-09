@@ -1,6 +1,30 @@
 import discord
 
 
+def discord_add_from_pm():
+    if args[1].startswith("http") or args[1].startswith("www."):
+        if not (args[1].startswith("http://github.com") or args[1].startswith("https://github.com") or args[
+            1].startswith("www.github.com")):
+            yield from client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(),
+                                                                                description="Please enter a valid github URL or enter your github profile name."))
+            return
+        profurl = args[1]
+    else:
+        profurl = "https://github.com/" + args[1]
+
+    if links.keys().__contains__(message.author.id):
+        yield from client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=(
+        "There is just an entry for this user!\n\n**[%s](%s)**\n\nChange the entry with `!github change <new url/username>` or remove it with `!github remove`." % (
+        message.author.name, links[message.author.id]))))
+        return
+    f = open(file, "a")
+    f.write(message.author.id + ":::" + profurl + "\n")
+    f.close()
+    yield from client.send_message(message.channel, embed=discord.Embed(color=discord.Color.green(), description=(
+    "Linked **[github profile](%s)** to user %s." % (profurl, message.author.mention))))
+
+
+
 def get_members_msg(client):
     members = discord.utils.get(client.servers, id="307084334198816769").member_count
     members_online = []
