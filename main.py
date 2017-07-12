@@ -61,6 +61,7 @@ def on_member_remove(member):
 def on_member_update(before, after):
     yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
     yield from cmd_dnd.check_status(before, after, client)
+    yield from functions.supp_add(before, after, client)
 
 
 @client.event

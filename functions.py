@@ -1,4 +1,7 @@
 import discord
+import asyncio
+
+from discord import User
 
 
 def discord_add_from_pm():
@@ -71,3 +74,18 @@ def send_join_pm(member, client):
                                       super_bots[2:],
                                       user_bots[2:])
                                    )
+
+
+
+def supp_add(before, after, client):
+
+    message_id = "334299368079360000"
+    channel = discord.utils.get(list(client.servers)[0].channels, name="welcome")
+    message = yield from client.get_message(channel, message_id)
+
+    if len(list(filter(lambda r: r.name == "Supporter", before.roles))) == 0 and len(list(filter(lambda r: r.name == "Supporter", after.roles))) == 1:
+        content = ":bookmark:   **Supporters**\n\n"
+        for m in after.server.members:
+            if len(list(filter(lambda r: r.name == "Supporter", m.roles))) == 1:
+                content += ":white_small_square:  " + m.mention + "\n"
+        yield from client.edit_message(message, content)

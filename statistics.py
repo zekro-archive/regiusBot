@@ -13,7 +13,7 @@ def action():
 
     gspread_api.append([date, members, online])
 
-    sleep(60 * 10)
+    sleep(10 * 60)
     action()
 
 

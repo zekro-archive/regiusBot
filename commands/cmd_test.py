@@ -1,7 +1,6 @@
 import threading
-
+import asyncio
 import discord
-from discord import Server
 
 description = "Just for zekro for testing purposes."
 
@@ -15,3 +14,5 @@ def ex(message, client):
                                                                            description=("Sorry, but this command is only allowed to be executed by %s (my Owner ^^)." % discord.utils.get(message.server.members, id="221905671296253953").mention)))
         return
 
+    yield from asyncio.sleep(10)
+    yield from client.send_message(message.channel, "TEST")
