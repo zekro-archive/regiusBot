@@ -4,7 +4,7 @@ from os import path, mkdir
 client = None
 
 MESSAGE_XP_VAL = 5
-ONLINE_XP_VAL = 10
+ONLINE_XP_VAL = 50
 ONLINE_TIMEOUT = 60 * 30 # (30 Minuten)
 
 
@@ -40,9 +40,8 @@ def add_time_xp():
 
     yield from client.wait_until_ready()
 
-    table = get_table()
-
     while not client.is_closed:
+        table = get_table()
         for memb in filter(lambda m: not m.bot and not m.status.__str__() == "offline", list(client.servers)[0].members):
             if table.__contains__(memb.id):
                 table[memb.id] += ONLINE_XP_VAL

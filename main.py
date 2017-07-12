@@ -42,7 +42,7 @@ def on_ready():
     print("BOT STARTED\n-----------------")
     yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
-#    statistics.start()
+    statistics.start()
 
 
 @client.event
@@ -62,8 +62,8 @@ def on_member_remove(member):
 @asyncio.coroutine
 def on_member_update(before, after):
     yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
-#    yield from cmd_dnd.check_status(before, after, client)
-#    yield from functions.supp_add(before, after, client)
+    yield from cmd_dnd.check_status(before, after, client)
+    yield from functions.supp_add(before, after, client)
 
 
 @client.event
