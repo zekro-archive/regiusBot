@@ -11,8 +11,7 @@ import functions
 import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
-    cmd_github, cmd_say, cmd_pmbc
-
+    cmd_github, cmd_say, cmd_pmbc, cmd_xp
 
 client = discord.Client()
 
@@ -31,6 +30,7 @@ cmdmap = {
             "say": cmd_say,
             "test": cmd_test,
             "pmbc": cmd_pmbc,
+            "xp": cmd_xp,
         }
 
 
