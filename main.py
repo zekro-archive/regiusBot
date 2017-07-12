@@ -1,4 +1,6 @@
 import asyncio
+
+import level_system
 import statistics
 from time import gmtime, strftime
 
@@ -40,7 +42,7 @@ def on_ready():
     print("BOT STARTED\n-----------------")
     yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
-    statistics.start()
+#    statistics.start()
 
 
 @client.event
@@ -60,14 +62,17 @@ def on_member_remove(member):
 @asyncio.coroutine
 def on_member_update(before, after):
     yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
-    yield from cmd_dnd.check_status(before, after, client)
-    yield from functions.supp_add(before, after, client)
+#    yield from cmd_dnd.check_status(before, after, client)
+#    yield from functions.supp_add(before, after, client)
 
 
 @client.event
 @asyncio.coroutine
 def on_message(message):
     yield from cmd_dnd.test(message, client)
+
+    level_system.add_message_xp(message.author)
+
     if message.content.startswith(STATICS.PREFIX):
         print(strftime("[%d.%m.%Y %H:%M:%S]", gmtime()) + " [COMMAND] \"" + message.content + "\" by " + message.author.name)
         invoke = message.content.split(" ")[0].replace(STATICS.PREFIX, "", 1)
@@ -80,4 +85,6 @@ def on_message(message):
             yield from cmdmap.get(invoke).ex(message, client)
 
 
+level_system.client = client
+client.loop.create_task(level_system.add_time_xp())
 client.run(SECRETS.token)
