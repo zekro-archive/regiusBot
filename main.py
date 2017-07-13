@@ -42,7 +42,7 @@ def on_ready():
     print("BOT STARTED\n-----------------")
     yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
-    statistics.start()
+    statistics.run()
 
 
 @client.event
@@ -86,5 +86,9 @@ def on_message(message):
 
 
 level_system.client = client
+statistics.client = client
+
+client.loop.create_task(level_system.level_to_scoreboard())
 client.loop.create_task(level_system.add_time_xp())
+
 client.run(SECRETS.token)
