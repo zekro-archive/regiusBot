@@ -1,9 +1,8 @@
-import asyncio
 import statistics
 from time import gmtime, strftime
 
 import discord
-from discord import Game, Server, Member
+from discord import Game
 
 import functions
 import SECRETS
@@ -35,39 +34,34 @@ cmdmap = {
 # LISTENER
 
 @client.event
-@asyncio.coroutine
-def on_ready():
+async def on_ready():
     print("BOT STARTED\n-----------------")
-    yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
+    await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
     statistics.start()
 
 
 @client.event
-@asyncio.coroutine
-def on_member_join(member):
-    yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
-    yield from functions.send_join_pm(member, client)
+async def on_member_join(member):
+    await client.change_presence(game=Game(name=functions.get_members_msg(client)))
+    await functions.send_join_pm(member, client)
 
 
 @client.event
-@asyncio.coroutine
-def on_member_remove(member):
-    yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
+async def on_member_remove(member):
+    await client.change_presence(game=Game(name=functions.get_members_msg(client)))
 
 
 @client.event
-@asyncio.coroutine
-def on_member_update(before, after):
-    yield from client.change_presence(game=Game(name=functions.get_members_msg(client)))
-    yield from cmd_dnd.check_status(before, after, client)
-    yield from functions.supp_add(before, after, client)
+async def on_member_update(before, after):
+    await client.change_presence(game=Game(name=functions.get_members_msg(client)))
+    await cmd_dnd.check_status(before, after, client)
+    await functions.supp_add(before, after, client)
 
 
 @client.event
-@asyncio.coroutine
-def on_message(message):
-    yield from cmd_dnd.test(message, client)
+async def on_message(message):
+    await cmd_dnd.test(message, client)
     if message.content.startswith(STATICS.PREFIX):
         print(strftime("[%d.%m.%Y %H:%M:%S]", gmtime()) + " [COMMAND] \"" + message.content + "\" by " + message.author.name)
         invoke = message.content.split(" ")[0].replace(STATICS.PREFIX, "", 1)
@@ -75,9 +69,9 @@ def on_message(message):
         if invoke == "help":
             for s in cmdmap.keys():
                 command_string += ":white_small_square:  **" + s + "**  -  `" + cmdmap.get(s).description + "`\n"
-            yield from client.send_message(message.author, STATICS.helpText + command_string)
+            await client.send_message(message.author, STATICS.helpText + command_string)
         else:
-            yield from cmdmap.get(invoke).ex(message, client)
+            await cmdmap.get(invoke).ex(message, client)
 
 
 client.run(SECRETS.token)

@@ -21,7 +21,6 @@ help = "**USAGE:**\n" \
        "\n\n*If there are other languages you want to add, please contact the server owner or admin to add the role manually.*" % get_roles().__str__()[1:-1].replace("'", "")
 
 
-
 def ex(message, client):
 
     for s in get_roles():
