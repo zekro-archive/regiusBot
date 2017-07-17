@@ -12,7 +12,6 @@ from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cm
     cmd_github, cmd_say, cmd_pmbc, cmd_mute
 import level_system
 
-
 DEVMODE = False
 if sys.argv.__contains__("-dev"):
     DEVMODE = True
@@ -89,5 +88,11 @@ level_system.client = client
 if not DEVMODE:
     client.loop.create_task(level_system.level_to_scoreboard())
     client.loop.create_task(level_system.add_time_xp())
+
+level_system.client = client
+statistics.client = client
+
+client.loop.create_task(level_system.level_to_scoreboard())
+client.loop.create_task(level_system.add_time_xp())
 
 client.run(SECRETS.token)

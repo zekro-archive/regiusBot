@@ -27,6 +27,7 @@ async def ex(message, client):
             map_dnd.remove(author)
             await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.green(), description=("%s is now back again." % author.mention)))
 
+
     if message.content.startswith(STATICS.PREFIX + "afk"):
 
         if map_dnd.__contains__(author):
@@ -70,3 +71,4 @@ async def check_status(before, after, client):
         if map_dnd.__contains__(after):
             map_dnd.remove(after)
             await client.send_message(channel, embed=discord.Embed(color=discord.Color.green(), description=("%s is now back again." % after.mention)))
+

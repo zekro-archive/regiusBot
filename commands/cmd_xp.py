@@ -20,3 +20,4 @@ async def ex(message, client):
         for memb_id in table[:20]:
             out += "**%s:**  **`%s XP`** \n" % (discord.utils.get(message.server.members, id=memb_id).name, table[memb_id])
         await client.send_message(message.channel, "**XP LIST (Top 10)**\n\n" + out)
+

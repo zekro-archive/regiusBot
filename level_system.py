@@ -10,6 +10,7 @@ ONLINE_XP_VAL = 5
 ONLINE_TIMEOUT = 60 * 30  # (30 Minuten)
 
 
+
 # Speichert das Dictionary {"Member ID":xp_value} als CSV in SAVES/level.csv
 def save(table):
 
@@ -52,11 +53,13 @@ async def add_time_xp():
 
 async def level_to_scoreboard():
     await client.wait_until_ready()
+
     while not client.is_closed:
 
         d = get_table()
         table = dict([(k, d[k]) for k in sorted(d, key=d.get, reverse=True)])
         server = list(client.servers)[0]
+
         outstr = ":scroll:   __**SCOREBOARD**__ (Top 20)  :scroll: \n\n"
 
         for id in table:
@@ -69,6 +72,7 @@ async def level_to_scoreboard():
                 outstr += ":white_small_square:   **[LVL %s]**    %s  -  `%s XP`\n" % (lvl, memb.name, xp)
 
         try:
+
             msg = await client.get_message(channel=discord.utils.get(server.channels, name="scoreboard"), id="334789295091089428")
             await client.edit_message(msg, outstr[:2000])
         except:
@@ -99,3 +103,4 @@ def get_xp(member):
 
 def list_xp():
     return get_table()
+
