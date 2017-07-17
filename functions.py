@@ -1,4 +1,7 @@
 import discord
+from os import path
+import os
+from time import gmtime, strftime
 
 
 async def discord_add_from_pm():
@@ -72,7 +75,7 @@ async def send_join_pm(member, client):
 
 async def supp_add(before, after, client):
 
-    message_id = "334299368079360000"
+    message_id = "334305867031904257"
     channel = discord.utils.get(list(client.servers)[0].channels, name="welcome")
     message = await client.get_message(channel, message_id)
 
@@ -82,3 +85,11 @@ async def supp_add(before, after, client):
             if len(list(filter(lambda r: r.name == "Supporter", m.roles))) == 1:
                 content += ":white_small_square:  " + m.mention + "\n"
         await client.edit_message(message, content)
+
+
+def logcmd(message):
+    if not path.isdir("SAVES"):
+        os.mkdir("SAVES")
+    with open("SAVES/cmdlog.txt", "a") as fw:
+        time = strftime("%d.%m.%Y %H:%M:%S", gmtime())
+        fw.write("[%s] [%s (%s)] [%s (%s)] '%s'\n" % (time, message.server.name, message.server.id, message.author.name, message.author.id, message.content))
