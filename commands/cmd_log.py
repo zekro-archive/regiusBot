@@ -9,10 +9,10 @@ import SECRETS
 description = "Show bot log"
 
 
-def ex(message, client):
+async def ex(message, client):
     if not os.path.isfile("screenlog.0"):
-        yield from client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(),
-                                                                            description="File `screenlog.0` does not exist!"))
+        await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(),
+                                                                       description="File `screenlog.0` does not exist!"))
     else:
         with open("screenlog.0") as f:
             lines = f.readlines()
@@ -28,7 +28,7 @@ def ex(message, client):
         for string in lines:
             log += string
 
-        message_send = yield from client.send_message(message.channel, embed=discord.Embed(
+        message_send = await client.send_message(message.channel, embed=discord.Embed(
             description="Uploading log to pastebin.com ..."))
 
         params = {"api_option": "paste", "api_dev_key": SECRETS.PASTEBIN_API_TOKEN, "api_paste_code": log_full,
@@ -36,6 +36,6 @@ def ex(message, client):
         paste = requests.post("https://pastebin.com/api/api_post.php", data=params).text.replace(
             "https://pastebin.com/", "https://pastebin.com/raw/")
 
-        yield from client.delete_message(message_send)
-        yield from client.send_message(message.channel,
-                                       "**Log of `screenlog.0`**\n*Full log file here: " + paste + "*\n\n" + "```" + log + "```")
+        await client.delete_message(message_send)
+        await client.send_message(message.channel,
+                                  "**Log of `screenlog.0`**\n*Full log file here: " + paste + "*\n\n" + "```" + log + "```")
