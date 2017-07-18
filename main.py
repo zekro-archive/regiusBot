@@ -9,7 +9,7 @@ import functions
 import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
-    cmd_github, cmd_say, cmd_pmbc, cmd_mute
+    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp
 import level_system
 
 DEVMODE = False
@@ -33,7 +33,8 @@ cmdmap = {
             "say": cmd_say,
             "test": cmd_test,
             "pmbc": cmd_pmbc,
-            "mute": cmd_mute
+            "mute": cmd_mute,
+            "xp": cmd_xp,
         }
 
 
