@@ -10,7 +10,6 @@ ONLINE_XP_VAL = 5
 ONLINE_TIMEOUT = 60 * 30  # (30 Minuten)
 
 
-
 # Speichert das Dictionary {"Member ID":xp_value} als CSV in SAVES/level.csv
 def save(table):
 
@@ -103,4 +102,3 @@ def get_xp(member):
 
 def list_xp():
     return get_table()
-

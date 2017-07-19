@@ -9,8 +9,9 @@ import functions
 import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
-    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp
+    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist
 import level_system
+
 
 DEVMODE = False
 if sys.argv.__contains__("-dev"):
@@ -35,6 +36,7 @@ cmdmap = {
             "pmbc": cmd_pmbc,
             "mute": cmd_mute,
             "xp": cmd_xp,
+            "blacklist": cmd_blacklist,
         }
 
 
@@ -73,6 +75,9 @@ async def on_message(message):
     await cmd_dnd.test(message, client)
     await cmd_mute.check_mute(message, client)
     if message.content.startswith(STATICS.PREFIX) and not message.author == client.user:
+        if cmd_blacklist.check(message.author):
+            await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description="Sorry, %s, you are blacklisted for this bot so you are not allowed to use this bots commands!" % message.author.mention))
+            return
         functions.logcmd(message)
         print(strftime("[%d.%m.%Y %H:%M:%S]", gmtime()) + " [COMMAND] \"" + message.content + "\" by " + message.author.name)
         invoke = message.content.split(" ")[0].replace(STATICS.PREFIX, "", 1)
@@ -83,6 +88,7 @@ async def on_message(message):
             await client.send_message(message.author, STATICS.helpText + command_string)
         else:
             await cmdmap.get(invoke).ex(message, client)
+
 
 level_system.client = client
 

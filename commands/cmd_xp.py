@@ -19,7 +19,13 @@ async def ex(message, client):
                                                                description=("**[LVL %s]**  `%s XP`\n```\n%s\n```" % (level, xp, progress_bar))))
 
     else:
-        table = level_system.get_table()
+        gettedtable = level_system.get_table()
+        temptable = dict([(k, gettedtable[k]) for k in sorted(gettedtable, key=gettedtable.get, reverse=True)])
+        if len(temptable.keys) >= 20:
+            table = temptable
+        else:
+            for k, v in temptable:
+                table[k] = v
         out = ""
         for memb_id in table:
             try:
