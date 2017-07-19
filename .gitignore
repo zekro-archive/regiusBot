@@ -6,3 +6,7 @@ __pycache__/
 .idea/inspectionProfiles/Project_Default.xml
 *.xml
 .idea/inspectionProfiles/Project_Default.xml
+gsecrets.json
+SAVES/statistics.csv
+.idea/workspace.xml
+SAVES/level.csv
