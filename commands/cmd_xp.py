@@ -21,15 +21,22 @@ async def ex(message, client):
     else:
         gettedtable = level_system.get_table()
         temptable = dict([(k, gettedtable[k]) for k in sorted(gettedtable, key=gettedtable.get, reverse=True)])
-        if len(temptable.keys) >= 20:
+        table = {}
+        if len(temptable.keys()) <= 20:
             table = temptable
         else:
-            for k, v in temptable:
-                table[k] = v
+            _count = 0
+            for k in temptable:
+                table[k] = temptable.get(k)
+                _count += 1
+                if _count >= 20:
+                    break
         out = ""
+        _count = 0
         for memb_id in table:
             try:
-                out += "**%s:**  **`%s XP`** \n" % (discord.utils.get(message.server.members, id=memb_id).name, table[memb_id])
+                _count += 1
+                out += "%s. - **%s:**  **`%s XP`** \n" % (_count, discord.utils.get(message.server.members, id=memb_id).name, table[memb_id])
             except:
                 pass
         await client.send_message(message.channel, "**XP LIST**\n\n" + out[:1980])

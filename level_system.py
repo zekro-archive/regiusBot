@@ -61,14 +61,18 @@ async def level_to_scoreboard():
 
         outstr = ":scroll:   __**SCOREBOARD**__ (Top 20)  :scroll: \n\n"
 
+        _count = 0
         for id in table:
             memb = discord.utils.get(server.members, id=id)
             if memb is not None:
+                _count += 1
                 xp = table[id]
                 lvl = str(int(xp / 1000))
                 if len(lvl) < 2:
                     lvl = "0" + lvl
-                outstr += ":white_small_square:   **[LVL %s]**    %s  -  `%s XP`\n" % (lvl, memb.name, xp)
+                outstr += "%s.  -  **[LVL %s]**    %s  -  `%s XP`\n" % (_count, lvl, memb.name, xp)
+                if _count >= 20:
+                    break
 
         try:
 

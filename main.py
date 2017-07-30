@@ -48,7 +48,7 @@ async def on_ready():
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
     if not DEVMODE:
-        statistics.start()
+        statistics.run()
 
 
 @client.event
