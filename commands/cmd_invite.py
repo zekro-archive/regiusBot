@@ -3,10 +3,14 @@ import discord
 
 description = "Enter bot ID witch the bot sends as invite link to zekro (Server Owner)"
 
+last_invite = None
+
 
 async def ex(message, client):
     args = message.content.split(" ")
     if len(args) > 1:
+        global last_invite
+        last_invite = message.author
         await client.send_message(message.server.get_member("221905671296253953"), embed=discord.Embed(
             title=message.author.name,
             description="https://discordapp.com/oauth2/authorize?client_id=%s&scope=bot" % args[1]))

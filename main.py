@@ -8,7 +8,7 @@ import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist
-from utils import functions, level_system, statistics
+from utils import functions, level_system, statistics, userbots
 
 
 DEVMODE = False
@@ -53,6 +53,7 @@ async def on_ready():
 async def on_member_join(member):
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     await functions.send_join_pm(member, client)
+    await userbots.joined(member, client)
 
 
 @client.event

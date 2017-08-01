@@ -38,6 +38,9 @@ def get_members_msg(client):
 
 async def send_join_pm(member, client):
 
+    if member.bot:
+        return
+
     currently_online = ""
     for m in member.server.members:
         if not m.status.__str__() == "offline":
