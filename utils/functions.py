@@ -4,6 +4,7 @@ import os
 from time import gmtime, strftime
 
 
+# WILL BE DELETED
 # async def discord_add_from_pm():
 #     if args[1].startswith("http") or args[1].startswith("www."):
 #         if not (args[1].startswith("http://github.com") or args[1].startswith("https://github.com") or args[1].startswith("www.github.com")):
