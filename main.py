@@ -1,16 +1,14 @@
-import statistics
 from time import gmtime, strftime
 import sys
 
 import discord
 from discord import Game
 
-import functions
 import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist
-import level_system
+from utils import functions, level_system, statistics
 
 
 DEVMODE = False
