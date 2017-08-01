@@ -1,7 +1,7 @@
 import discord
 from discord import Embed
 
-import level_system
+from utils import level_system
 
 
 description = "Show your Level or server scoreboard"

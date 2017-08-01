@@ -1,6 +1,6 @@
 import subprocess
 import discord
-import perms
+from utils import perms
 import STATICS
 
 

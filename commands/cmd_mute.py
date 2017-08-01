@@ -1,7 +1,7 @@
 import discord
 from os import path, makedirs, remove
 import STATICS
-import perms
+from utils import perms
 
 
 ROLE_NAME = "Supporter"

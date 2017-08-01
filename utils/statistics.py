@@ -1,7 +1,6 @@
-import asyncio
 import threading
 
-import gspread_api
+from utils import gspread_api
 from time import strftime, gmtime, sleep
 
 
