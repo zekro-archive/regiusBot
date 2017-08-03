@@ -8,7 +8,7 @@ import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist
-from utils import functions, level_system, statistics, userbots
+from utils import functions, level_system, statistics, userbots, report
 
 
 DEVMODE = False
@@ -73,6 +73,11 @@ async def on_member_update(before, after):
 async def on_message(message):
     await cmd_dnd.test(message, client)
     await cmd_mute.check_mute(message, client)
+
+    if message.channel.is_private and not message.author == client.user:
+        report.client = client
+        await report.handle(message)
+
     if message.content.startswith(STATICS.PREFIX) and not message.author == client.user:
         if cmd_blacklist.check(message.author):
             await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description="Sorry, %s, you are blacklisted for this bot so you are not allowed to use this bots commands!" % message.author.mention))
