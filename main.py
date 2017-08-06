@@ -7,7 +7,7 @@ from discord import Game
 import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
-    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist
+    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream
 from utils import functions, level_system, statistics, userbots, report
 
 
@@ -35,6 +35,7 @@ cmdmap = {
             "mute": cmd_mute,
             "xp": cmd_xp,
             "blacklist": cmd_blacklist,
+            "stream": cmd_stream,
         }
 
 
@@ -102,8 +103,5 @@ if not DEVMODE:
 
 level_system.client = client
 statistics.client = client
-
-client.loop.create_task(level_system.level_to_scoreboard())
-client.loop.create_task(level_system.add_time_xp())
 
 client.run(SECRETS.token)
