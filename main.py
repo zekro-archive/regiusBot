@@ -7,7 +7,7 @@ from discord import Game
 import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
-    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream
+    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info
 from utils import functions, level_system, statistics, userbots, report
 
 
@@ -36,6 +36,7 @@ cmdmap = {
             "xp": cmd_xp,
             "blacklist": cmd_blacklist,
             "stream": cmd_stream,
+            "info": cmd_info,
         }
 
 
@@ -94,6 +95,8 @@ async def on_message(message):
         else:
             await cmdmap.get(invoke).ex(message, client)
 
+
+cmd_info.cmdcount = len(cmdmap)
 
 level_system.client = client
 
