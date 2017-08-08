@@ -7,7 +7,7 @@ from discord import Game
 import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
-    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info
+    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick
 from utils import functions, level_system, statistics, userbots, report
 
 
@@ -37,6 +37,8 @@ cmdmap = {
             "blacklist": cmd_blacklist,
             "stream": cmd_stream,
             "info": cmd_info,
+            "video": cmd_video,
+            "botkick": cmd_botkick,
         }
 
 
@@ -44,7 +46,13 @@ cmdmap = {
 
 @client.event
 async def on_ready():
-    print("BOT STARTED\n-----------------")
+    servers = "\n   - ".join([s.name + " (" + s.id + ")" for s in client.servers])
+    print("\n-------------------------------------\n"
+          "Knecht Bot v.%s\n"
+          "discord.py version: %s\n"
+          "Running on servers:\n"
+          "   - %s\n"
+          "-------------------------------------\n\n" % (STATICS.VERSION, discord.__version__, servers))
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
     if not DEVMODE:
