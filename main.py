@@ -17,7 +17,7 @@ if sys.argv.__contains__("-dev"):
     DEVMODE = True
 cmd_stream.DEVMODE = DEVMODE
 cmd_video.DEVMODE = DEVMODE
-STATICS.DEVMODE = DEVMODE
+STATICS.set_prefix(DEVMODE)
 
 # Create discord client
 client = discord.Client()
@@ -56,14 +56,15 @@ async def on_ready():
     print("\n-------------------------------------\n"
           "Knecht Bot v.%s\n"
           "discord.py version: %s\n"
+          "Prefix: '%s'\n"
           "Running on servers:\n"
           "   - %s\n"
-          "-------------------------------------\n\n" % (STATICS.VERSION, discord.__version__, servers))
+          "-------------------------------------\n\n" % (STATICS.VERSION, discord.__version__, STATICS.PREFIX, servers))
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
     if not DEVMODE:
         statistics.run()
-
+        
 
 @client.event
 async def on_member_join(member):

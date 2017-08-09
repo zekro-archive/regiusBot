@@ -8,7 +8,7 @@ def get_members_msg(client):
     """
     Returns game string with current member count and online member count.
     """
-    server = client.servers[0]
+    server = list(client.servers)[0]
     members = str(len(server.members))
     online_members = str(len([m for m in server.members if not m.bot and not str(m.status) == "offline"]))
     return "%s members (%s online) | !help" % (members, online_members)

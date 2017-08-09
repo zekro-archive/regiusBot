@@ -1,4 +1,6 @@
+SAVES/*
 SECRETS.py
 *.pyc
 __pycache__/*
 gsecrets.json
+gitlinks.save

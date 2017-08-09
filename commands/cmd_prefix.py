@@ -1,9 +1,5 @@
-import os
-from pathlib import Path
-import discord
-import time
-
-import STATICS
+from discord import Embed, Color, utils
+from os import path, mkdir
 
 
 description = "Register bot prefixes running in this server"
@@ -12,148 +8,146 @@ help = "**USAGE:**\n" \
        ":white_small_square:  `!prefix list`\n" \
        ":white_small_square:  `!prefix add <ID of bot> <prefix>`\n" \
        ":white_small_square:  `!prefix edit <ID of bot> <new prefix>`\n" \
-       ":white_small_square:  `!prefix remove <ID of bot>`\n" \
-       ":white_small_square:  `!prefix test <prefix>`\n"
+       ":white_small_square:  `!prefix remove <ID of bot>`\n"
+
+
+savefile = "SAVES/prefixes.txt"
+CLIENT = None
+CHANNEL = None
+SERVER = None
+
+
+async def error(content):
+    return await CLIENT.send_message(CHANNEL, embed=Embed(color=Color.red(), description=content))
+
+
+async def message(content, clr=Color.default()):
+    return await CLIENT.send_message(CHANNEL, embed=Embed(color=clr, description=content))
+
+
+def check_path():
+    if not path.isdir("SAVES"):
+        mkdir("SAVES")
+
+
+def get_bot(botid):
+    try:
+        return utils.get(SERVER.members, id=botid)
+    except:
+        return None
+
+
+def get_saves():
+    check_path()
+    if not path.isfile(savefile):
+        return {}
+    out = {}
+    with open(savefile) as f:
+        for line in f.readlines():
+            split = line.replace("\n", "").split("|||")
+            out[get_bot(split[0])] = split[1]
+    return out
+
+
+def save(indict):
+    check_path()
+    with open(savefile, "w") as f:
+        for k, v in indict.items():
+            f.write("%s|||%s\n" % (k.id, v))
+
+
+async def add(args):
+    current = get_saves()
+    bot = get_bot(args[0])
+    pre = args[1]
+    if bot is None:
+        await error("The bot with this ID is not registered on in this server!")
+    elif bot in current.keys():
+        await error("The bot %s is still registered!\nUse `!prefix edit <ID of bot> <new prefix>` to edit bots prefix!" % bot.mention)
+    elif pre in current.values():
+        await error("The prefix ```%s``` is still used from another bot!" % pre)
+    else:
+        current[bot] = pre
+        save(current)
+        await message("Successfully registered bot %s with prefix: ```%s```" % (bot.mention, pre), Color.green())
+
+
+async def edit(args):
+    current = get_saves()
+    bot = get_bot(args[0])
+    pre = args[1]
+
+    if bot is None:
+        await error("The bot with this ID is not registered on in this server!")
+    elif bot not in current.keys():
+        await error("The bot is not registered in this list!\nUse `!prefix add <ID of bot> <prefix>` to add your bot to the list.")
+    elif pre in current.values():
+        await error("The prefix ```%s``` is still used from another bot!" % pre)
+    else:
+        current[bot] = pre
+        save(current)
+        await message("Successfully set %s's prefix to ```%s```" % (bot.mention, pre), Color.green())
+
+
+async def list_all():
+    current = get_saves()
+
+    def _beautify(string):
+        string = string.replace("👑", "").replace("🤖", "")
+        maxlen = max([len(k.name if k.nick is None else k.nick) for k in current.keys()])
+        split = string.split("  -  ")
+        beautifyedleft = split[0]
+        while len(beautifyedleft) < maxlen - 1:
+            beautifyedleft += " "
+        return beautifyedleft + "  -  " + split[1]
+
+    out = "```\n" \
+          "%s" \
+          "```" % "\n".join([_beautify("%s  -  < %s >" % (k.name if k.nick is None else k.nick, v)) for k, v in current.items()])
+    await CLIENT.send_message(CHANNEL, embed=Embed(title="PREFIX LIST", description=out))
+
+
+async def removebot(args):
+    current = get_saves()
+    bot = get_bot(args[0])
+
+    if bot is None:
+        await error("The bot with this ID is not registered on in this server!")
+    elif bot not in current.keys():
+        await error("The bot is not registered in this list!\nUse `!prefix add <ID of bot> <prefix>` to add your bot to the list.")
+    else:
+        del current[bot]
+        save(current)
+        await message("Bot successfully deleted from list.")
 
 
 async def ex(message, client):
+    global CLIENT, SERVER, CHANNEL
+    CLIENT = client
+    SERVER = message.server
+    CHANNEL = message.channel
 
-    args = message.content.replace(STATICS.PREFIX + "prefix", "")[1:].split(" ")
+    args = message.content.split()[1:]
 
-    file = "prefixes.txt"
-
-    if args[0] == "":
-        await client.send_message(message.channel, embed=discord.Embed(description=help, colour=discord.Color.red()))
+    if len(args) < 1:
+        print("TETS")
+        await error(help)
         return
 
-    if args[0] == "add":
-
-        if len(args) < 3:
-            await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=help))
-            return
-
-        bot = discord.utils.get(message.server.members, id=args[1])
-
-        try:
-            if not bot.bot:
-                await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
-                return
-        except:
-            await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
-            return
-
-        if Path(file).is_file():
-            readout = {}
-            for line in open(file).readlines():
-                readout[line.split(":")[1].replace("\n", "")] = line.split(":")[0]
-            if readout.keys().__contains__(args[2]):
-                await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Entered prefix is just uses! Please change prefix settings in your bot!"))
-                return
-
-        w = open(file, "a")
-        w.write(args[1] + ":" + args[2] + "\n")
-        w.close()
-        await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.green(), description="Assigned prefix `%s` to bot %s." % (args[2], bot.mention)))
-
-    if args[0] == "edit":
-
-        if not message.author == message.server.owner:
-            msg = await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=("Sorry, but only the server owner (%s) is allowed to use this command." % message.server.owner.mention)))
-            await client.delete_message(message)
-            time.sleep(5)
-            await client.delete_message(msg)
-            return
-
-        if len(args) < 3:
-            await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=help))
-            return
-
-        bot = discord.utils.get(message.server.members, id=args[1])
-
-        try:
-            if not bot.bot:
-                await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
-                return
-        except:
-            await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
-            return
-
-        before = ""
-        if Path(file).is_file():
-            readout = {}
-            for line in open(file).readlines():
-                readout[line.split(":")[0]] = line.split(":")[1].replace("\n", "")
-            if readout.keys().__contains__(args[1]):
-                before = readout[args[1]]
-                readout[args[1]] = args[2]
-                os.remove(file)
-                w = open(file, "w")
-                for k in readout.keys():
-                    w.write(k + ":" + readout[k] + "\n")
-                w.close()
-
-        await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.green(), description="Changed prefix from `%s` to `%s` of bot %s." % (before, args[2], bot.mention)))
-
-    if args[0] == "remove":
-
-        if not message.author == message.server.owner:
-            msg = await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=("Sorry, but only the server owner (%s) is allowed to use this command." % message.server.owner.mention)))
-            await client.delete_message(message)
-            time.sleep(5)
-            await client.delete_message(msg)
-            return
-
-        if len(args) < 2:
-            await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=help))
-            return
-
-        bot = discord.utils.get(message.server.members, id=args[1])
-
-        try:
-            if not bot.bot:
-                await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
-                return
-        except:
-            await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="Please enter a valid ID of a bots user account."))
-            return
-
-        if Path(file).is_file():
-            readout = {}
-            for line in open(file).readlines():
-                readout[line.split(":")[0]] = line.split(":")[1].replace("\n", "")
-            if readout.keys().__contains__(args[1]):
-                del readout[args[1]]
-                os.remove(file)
-                w = open(file, "w")
-                for k in readout.keys():
-                    w.write(k + ":" + readout[k] + "\n")
-                w.close()
-
-        await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.green(), description="Removed entry of Bot %s." % (bot.mention)))
-
-    if args[0] == "list":
-
-        out = "**Registered bot prefixes:**\n\n"
-
-        for line in open(file).readlines():
-            out += ":white_small_square:  **%s** (%s)  -  `%s`\n" % (discord.utils.get(message.server.members, id=line.split(":")[0]).name, discord.utils.get(message.server.members, id=line.split(":")[0]).mention, line.split(":")[1])
-        await client.send_message(message.channel, embed=discord.Embed(description=out))
-
-    if args[0] == "test":
-
-        if len(args) < 2:
-            await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=help))
-            return
-
-        if not Path(file).is_file():
-            await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description="There are no prefixes saved yet.\n\nRegister your prefix with\n`!prefix register <ID of bot> <prefix>`"))
-            return
-
-        readout = {}
-        for line in open(file).readlines():
-            readout[line.split(":")[1].replace("\n", "")] = line.split(":")[0]
-
-        if readout.keys().__contains__(args[1]):
-            await client.send_message(message.channel, embed=discord.Embed(description=("Prefix `%s` ist just used by %s." % (args[1], discord.utils.get(message.server.members, id=readout.get(args[1])).mention))))
+    if len(args) == 2:
+        if args[0] == "add":
+            await add(args[1:])
+        elif args[0] == "edit":
+            await edit(args[1:])
         else:
-            await client.send_message(message.channel, embed=discord.Embed(description=("Prefix `%s` is currently not used by any bot on this server." % args[1])))
+            await error(help)
+    elif len(args) == 1:
+        if args[0] == "remove":
+            await removebot(args[1:])
+        else:
+            await error(help)
+    else:
+        if args[0] == "list":
+            await list_all()
+        else:
+            await error(help)

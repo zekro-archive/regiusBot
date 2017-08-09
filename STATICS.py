@@ -1,6 +1,9 @@
-DEVMODE = False
-
-PREFIX = "." if DEVMODE else "!"
-VERSION = "1.C51"
+PREFIX = "!"
+VERSION = "1.C52"
 helpText = "__**Command list:**__\n\n"
 PERMS_ROLE_1 = "Supporter"
+
+
+def set_prefix(devmode):
+    global PREFIX
+    PREFIX = "." if devmode else "!"
