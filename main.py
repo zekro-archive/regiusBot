@@ -11,15 +11,18 @@ from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cm
 from utils import functions, level_system, statistics, userbots, report
 
 
+# Setting up devmode when argument "-dev" entered
 DEVMODE = False
 if sys.argv.__contains__("-dev"):
     DEVMODE = True
 cmd_stream.DEVMODE = DEVMODE
 cmd_video.DEVMODE = DEVMODE
+STATICS.DEVMODE = DEVMODE
 
-
+# Create discord client
 client = discord.Client()
 
+# Register command classes with invokes
 cmdmap = {
             "lmgtfy": cmd_google,
             "invite": cmd_invite,
@@ -67,7 +70,6 @@ async def on_member_join(member):
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     await functions.send_join_pm(member, client)
     await userbots.joined(member, client)
-
 
 @client.event
 async def on_member_remove(member):

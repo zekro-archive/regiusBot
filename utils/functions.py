@@ -4,39 +4,21 @@ import os
 from time import gmtime, strftime
 
 
-# WILL BE DELETED
-# async def discord_add_from_pm():
-#     if args[1].startswith("http") or args[1].startswith("www."):
-#         if not (args[1].startswith("http://github.com") or args[1].startswith("https://github.com") or args[1].startswith("www.github.com")):
-#             await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(),
-#                                                                            description="Please enter a valid github URL or enter your github profile name."))
-#             return
-#         profurl = args[1]
-#     else:
-#         profurl = "https://github.com/" + args[1]
-
-#     if links.keys().__contains__(message.author.id):
-#         await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=(
-#             "There is just an entry for this user!\n\n**[%s](%s)**\n\nChange the entry with `!github change <new url/username>` or remove it with `!github remove`." % (
-#                 message.author.name, links[message.author.id]))))
-#         return
-#     f = open(file, "a")
-#     f.write(message.author.id + ":::" + profurl + "\n")
-#     f.close()
-#     await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.green(), description=(
-#             "Linked **[github profile](%s)** to user %s." % (profurl, message.author.mention))))
-
-
 def get_members_msg(client):
-    members = discord.utils.get(client.servers, id="307084334198816769").member_count
-    members_online = []
-    for m in discord.utils.get(client.servers, id="307084334198816769").members:
-        if not m.status.__str__() == "offline":
-            members_online.append(m)
-    return "%s members (%s online) | !help" % (members, len(members_online))
+    """
+    Returns game string with current member count and online member count.
+    """
+    server = client.servers[0]
+    members = str(len(server.members))
+    online_members = str(len([m for m in server.members if not m.bot and not str(m.status) == "offline"]))
+    return "%s members (%s online) | !help" % (members, online_members)
 
 
 async def send_join_pm(member, client):
+    """
+    |coro|
+    Sends a welcome private message to joined members.
+    """
 
     if member.bot:
         return
@@ -78,6 +60,10 @@ async def send_join_pm(member, client):
 
 
 async def supp_add(before, after, client):
+    """
+    |coro|
+    Edits a message in the welcome channel to list all current moderators and suppoerters names.
+    """
 
     message_id = "334305867031904257"
     channel = discord.utils.get(list(client.servers)[0].channels, name="welcome")
@@ -92,6 +78,9 @@ async def supp_add(before, after, client):
 
 
 def logcmd(message):
+    """
+    Logs command out of message in a file.
+    """
     if not path.isdir("SAVES"):
         os.mkdir("SAVES")
     with open("SAVES/cmdlog.txt", "a") as fw:
