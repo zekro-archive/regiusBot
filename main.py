@@ -14,6 +14,9 @@ from utils import functions, level_system, statistics, userbots, report
 DEVMODE = False
 if sys.argv.__contains__("-dev"):
     DEVMODE = True
+cmd_stream.DEVMODE = DEVMODE
+cmd_video.DEVMODE = DEVMODE
+
 
 client = discord.Client()
 
