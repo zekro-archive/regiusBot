@@ -8,7 +8,7 @@ import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick, \
-    cmd_stats
+    cmd_stats, cmd_user
 from utils import functions, level_system, statistics, userbots, report
 
 
@@ -48,6 +48,8 @@ cmdmap = {
             "video": cmd_video,
             "botkick": cmd_botkick,
             "stats": cmd_stats,
+            "user": cmd_user,
+            "userinfo": cmd_user,
         }
 
 

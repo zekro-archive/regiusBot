@@ -1,5 +1,5 @@
-import discord
-from os import path, remove
+from discord import Embed, Color, utils
+from os import path, mkdir
 
 
 description = "Link your github account."
@@ -9,113 +9,128 @@ help = "**USAGE:**\n" \
        ":white_small_square:  `!github change <username/pofile link>`\n" \
        ":white_small_square:  `!github remove`\n" \
        ":white_small_square:  `!github list`\n" \
-       ":white_small_square:  `!github get <@mention>`\n"
+       ":white_small_square:  `!github <@mention>`\n"
+
+savefile = "SAVES/gitlinks.dat"
+
+CLIENT = None
+CHANNEL = None
+SERVER = None
+AUTHOR = None
 
 
-file = "gitlinks.save"
+async def error(content):
+    return await CLIENT.send_message(CHANNEL, embed=Embed(color=Color.red(), description=content))
 
 
-def get_links(f):
+async def message(content, clr=Color.default()):
+    return await CLIENT.send_message(CHANNEL, embed=Embed(color=clr, description=content))
 
-    links = {}
 
-    if path.isfile(f):
-        reader = open(f)
-        for l in reader:
-            links[l.split(":::")[0]] = l.split(":::")[1][:-1]
-        reader.close()
-    return links
+def check_path():
+    if not path.isdir("SAVES"):
+        mkdir("SAVES")
+
+
+def get_member(membid):
+    return utils.get(SERVER.members, id=membid)
+
+
+def get_list():
+    check_path()
+    if not path.isfile(savefile):
+        return {}
+    out = {}
+    with open(savefile) as f:
+        for line in f.readlines():
+            memb = get_member(line.split(":::")[0])
+            if memb is not None:
+                out[memb] = line.split(":::")[1].replace("\n", "")
+    return out
+
+
+def save_list(indict):
+    check_path()
+    with open(savefile, "w") as f:
+        for k, v in indict.items():
+            f.write("%s:::%s\n" % (k.id, v))
+
+
+async def add(args):
+    current = get_list()
+    gitlink = args[0] if "https://github.com" in args[0] \
+                         or "http://github.com" in args[0] \
+                         or "www.github.com" in args[0] \
+                         else "http://github.com/" + args[0]
+    if AUTHOR in current.keys():
+        await error("You are already registered in the list!\nUse `!github change` to change your entry.")
+    else:
+        current[AUTHOR] = gitlink
+        save_list(current)
+        await message("Successfully assigned [%s](%s) to member %s." % (gitlink, gitlink, AUTHOR.mention), Color.green())
+
+
+async def edit(args):
+    current = get_list()
+    gitlink = args[0] if "https://github.com" in args[0] \
+                         or "http://github.com" in args[0] \
+                         or "www.github.com" in args[0] \
+                         else "http://github.com/" + args[0]
+    if AUTHOR not in current.keys():
+        await error("You are currently not registered in this list!\nUse `!github add` to add an entry.")
+    elif gitlink in current.values():
+        await error("The same link is still registered in the list!")
+    else:
+        current[AUTHOR] = gitlink
+        save_list(current)
+        await message("Successfully assigned [%s](%s) to member %s." % (gitlink, gitlink, AUTHOR.mention), Color.green())
+
+
+async def send_list():
+    current = get_list()
+    out = "\n".join([":white_small_square:   [%s](%s)" % (k.name if k.nick is None else k.nick, v) for k, v in current.items()])
+    await CLIENT.send_message(CHANNEL, embed=Embed(title="GitHub Profiles",
+                                                   color=Color.blue(),
+                                                   description=out))
+
+
+async def remove_entry():
+    current = get_list()
+    if AUTHOR not in current.keys():
+        await error("You are not registered in this list, so why to remove you form it? :^)")
+    else:
+        del current[AUTHOR]
+        save_list(current)
+        await message("Successfully removed you from the list.", Color.orange())
+
+
+async def get(user):
+    current = get_list()
+    if user not in current.keys():
+        await error("User %s is currently not registered in this list!" % user.mention)
+    else:
+        await message("**[%s](%s)**" % (user.name if user.nick is None else user.nick, current[user]))
 
 
 async def ex(message, client):
+    global CLIENT, CHANNEL, SERVER, AUTHOR
+    CLIENT = client
+    SERVER = message.server
+    CHANNEL = message.channel
+    AUTHOR = message.author
 
-    links = get_links(file)
+    args = message.content.split()[1:]
+    mentions = message.mentions
 
-    args = message.content.split(" ")[1:]
-
-    if len(args) > 0:
-
-        if args[0] == "add" or args[0] == "link":
-
-            if len(args) < 2:
-                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=help))
-                return
-
-            if args[1].startswith("http") or args[1].startswith("www."):
-                if not (args[1].startswith("http://github.com") or args[1].startswith("https://github.com") or args[1].startswith("www.github.com")):
-                    await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description="Please enter a valid github URL or enter your github profile name."))
-                    return
-                profurl = args[1]
-            else:
-                profurl = "https://github.com/" + args[1]
-
-            if links.keys().__contains__(message.author.id):
-                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=("There is just an entry for this user!\n\n**[%s](%s)**\n\nChange the entry with `!github change <new url/username>` or remove it with `!github remove`." % (message.author.name, links[message.author.id]))))
-                return
-            f = open(file, "a")
-            f.write(message.author.id + ":::" + profurl + "\n")
-            f.close()
-            await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.green(), description=("Linked **[github profile](%s)** to user %s." % (profurl, message.author.mention))))
-
-        if args[0] == "change" or args[0] == "edit":
-
-            if len(args) < 2:
-                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=help))
-                return
-
-            if args[1].startswith("http") or args[1].startswith("www."):
-                if not (args[1].startswith("http://github.com") or args[1].startswith("https://github.com") or args[1].startswith("www.github.com")):
-                    await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description="Please enter a valid github URL or enter your github profile name."))
-                    return
-                profurl = args[1]
-            else:
-                profurl = "https://github.com/" + args[1]
-
-            if not links.keys().__contains__(message.author.id):
-                f = open(file, "a")
-                f.write(message.author.id + ":::" + profurl + "\n")
-                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.green(), description=("Linked **[github profile](%s)** to user %s." % (profurl, message.author.mention))))
-            else:
-                links[message.author.id] = profurl
-                remove(file)
-                f = open(file, "a")
-                for k in links.keys():
-                    f.write(k + ":::" + links[k])
-                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.green(), description=("Changed link to **[github profile](%s)** of user %s." % (profurl, message.author.mention))))
-            f.close()
-
-        if args[0] == "remove" or args[0] == "delete":
-            del links[message.author.id]
-            remove(file)
-            f = open(file, "a")
-            for k in links.keys():
-                f.write(k + ":::" + links[k])
-            await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.green(), description=("Removed link of user %s." % (message.author.mention))))
-            f.close()
-
-        if args[0] == "list" or args[0] == "all":
-            out = ""
-            for k in links.keys():
-                out += ":white_small_square:  **%s:**  *%s*\n" % (discord.utils.get(message.server.members, id=k).name, links[k])
-            await client.send_message(message.channel, "**GITHUB LINKS**\n\n" + out)
-
-        if args[0] == "get":
-
-            if len(args) < 2:
-                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=help))
-                return
-
-            membs = message.mentions
-
-            if len(membs) < 1:
-                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description="Please mention user you want to get the github link from."))
-                return
-
-            if not links.keys().__contains__(membs[0].id):
-                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=("Member %s has not linked his github profile yet." % membs[0].mention)))
-                return
-
-            await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.green(), description=("**[%s](%s)**" % (membs[0].name, links[membs[0].id]))))
-
-    else:
-        await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=help))
+    if len(mentions) > 0:
+        await get(mentions[0])
+    elif len(args) > 1:
+        if args[0] == "add":
+            await add(args[1:])
+        elif args[0] == "change" or args[0] == "edit":
+            await edit(args[1:])
+    elif len(args) > 0:
+        if args[0] == "list":
+            await send_list()
+        elif args[0] == "remove" or args[0] == "delete":
+            await remove_entry()
