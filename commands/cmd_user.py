@@ -64,6 +64,7 @@ async def ex(message, client):
             count += 1
         return out
 
+
     data = {
         "Name": user.name,
         "Nickname": user.name,
@@ -72,15 +73,14 @@ async def ex(message, client):
         "Roles": ", ".join([r.name for r in user.roles]),
         "Joined server": _format_time(user.joined_at),
         "Joined Discord": _format_time(user.created_at),
-        "Avatar URL": user.avatar_url,
         "GitHub:": _get_github(),
         "Bots:": " ".join(_get_bots()) if len(_get_bots()) > 0 else "No bots on this guild",
         "XP / Level": _get_xp(),
     }
 
     em = Embed(description="**__" + data["Name"] + "'s user profile__**\n\n", color=Color.gold())
-    if data["Avatar URL"] is not None:
-        em.set_thumbnail(url=data["Avatar URL"])
+    if user.avatar_url is not None:
+        em.set_thumbnail(url=user.avatar_url)
     for k, v in data.items():
         em.add_field(name=k, value=v, inline=False)
 
