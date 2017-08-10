@@ -130,18 +130,17 @@ async def ex(message, client):
     args = message.content.split()[1:]
 
     if len(args) < 1:
-        print("TETS")
         await error(help)
         return
 
-    if len(args) == 2:
+    if len(args) > 2:
         if args[0] == "add":
             await add(args[1:])
         elif args[0] == "edit":
             await edit(args[1:])
         else:
             await error(help)
-    elif len(args) == 1:
+    elif len(args) > 1:
         if args[0] == "remove":
             await removebot(args[1:])
         else:

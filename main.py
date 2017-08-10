@@ -7,7 +7,8 @@ from discord import Game
 import SECRETS
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
-    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick
+    cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick, \
+    cmd_stats
 from utils import functions, level_system, statistics, userbots, report
 
 
@@ -18,6 +19,7 @@ if sys.argv.__contains__("-dev"):
 cmd_stream.DEVMODE = DEVMODE
 cmd_video.DEVMODE = DEVMODE
 STATICS.set_prefix(DEVMODE)
+STATICS.set_version()
 
 # Create discord client
 client = discord.Client()
@@ -45,6 +47,7 @@ cmdmap = {
             "info": cmd_info,
             "video": cmd_video,
             "botkick": cmd_botkick,
+            "stats": cmd_stats,
         }
 
 
@@ -64,7 +67,7 @@ async def on_ready():
     statistics.server = list(client.servers)[0]
     if not DEVMODE:
         statistics.run()
-        
+
 
 @client.event
 async def on_member_join(member):
