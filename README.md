@@ -3,7 +3,8 @@
 ```
 This is a "little" Python Discord bot for my development Discord server.
 
-Because I'm developing a lot in this bot in my livestreams I'm getting a lot of questions, so I now created a FAQ for that.
+Because I'm developing a lot in this bot in my livestreams I'm getting a 
+lot of questions, so I now created a FAQ for that.
 ```
 
 ## FAQ
