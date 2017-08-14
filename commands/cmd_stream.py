@@ -1,7 +1,7 @@
 import discord
 from bs4 import BeautifulSoup
 import urllib
-from utils import perms
+from utils import perms, twitter_api
 
 
 description = "Stream announcing. (Only for zekro)"
@@ -40,3 +40,18 @@ async def ex(message, client):
     em.set_image(url=img_url)
 
     await client.send_message(channel, [r for r in message.server.roles if r.name == "Devs"][0].mention, embed=em)
+
+    postToTwitter(img_url, msgcont)
+
+
+def postToTwitter(img_url, msgcont):
+
+    msg = msgcont + "\n\n" if len(msgcont) < 92 else ""
+
+    content = "#DevStream ist online!\n\n%s" \
+              "live.zekro.de" % msg
+
+    try:
+        twitter_api.post_media(content, img_url)
+    except:
+        twitter_api.post_media(content, "http://img.youtube.com/vi/XcNhbUv1Bdc/maxresdefault.jpg")

@@ -4,3 +4,4 @@ SECRETS.py
 __pycache__/*
 gsecrets.json
 gitlinks.save
+twittersecrets.json
