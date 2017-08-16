@@ -2,6 +2,7 @@ import discord
 from os import path
 import os
 from time import gmtime, strftime
+import json
 
 
 def get_members_msg(client):
@@ -86,3 +87,14 @@ def logcmd(message):
     with open("SAVES/cmdlog.txt", "a") as fw:
         time = strftime("%d.%m.%Y %H:%M:%S", gmtime())
         fw.write("[%s] [%s (%s)] [%s (%s)] '%s'\n" % (time, message.server.name, message.server.id, message.author.name, message.author.id, message.content))
+
+
+def get_settings():
+    """
+    Get all settings out of the settings list as json object
+    """
+    if path.isfile("general_settings.json"):
+        with open("general_settings.json") as f:
+            return json.load(f)
+    else:
+        return None

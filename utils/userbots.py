@@ -1,6 +1,7 @@
 from commands import cmd_invite
 import discord
 from os import path, mkdir
+from urils import functions
 
 
 client = None
@@ -49,6 +50,9 @@ async def joined(member, clt):
 
     await client.add_roles(member, discord.utils.get(member.server.roles, name="User Bots"))
     await client.change_nickname(member, "🤖 %s (%s)" % (member.name, owner.name if owner is not None else "Null"))
+    invite_receivers = [discord.utils.get(member.server.members, id=uid) for uid in functions.get_settings()["roles"]["invite-receivers"]]
+    for u in invite_receivers:
+        await client.send_message(u, embed=discord.Embed(color=discord.Color.green(), description="Bot %s got accepted on the server." % member.mention))
     if owner is not None:
         await client.add_roles(owner, [r for r in member.server.roles if r.name == "Bot Owner"][0])
         await client.send_message(owner, embed=discord.Embed(color=discord.Color.orange(), description="**Your bot was successfully added on the server!**\n\nPlease use the command `!prefix` to set the bots prefix.\nPlease check before if your prefix is free with `!prefix list` and then assing to your bot a free prefix."))

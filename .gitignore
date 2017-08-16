@@ -5,3 +5,4 @@ __pycache__/*
 gsecrets.json
 gitlinks.save
 twittersecrets.json
+general_settings.json

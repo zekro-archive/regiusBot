@@ -3,8 +3,7 @@ import os
 import discord
 import requests
 
-import SECRETS
-
+from utils import functions
 
 description = "Show bot log"
 
@@ -31,7 +30,7 @@ async def ex(message, client):
         message_send = await client.send_message(message.channel, embed=discord.Embed(
             description="Uploading log to pastebin.com ..."))
 
-        params = {"api_option": "paste", "api_dev_key": SECRETS.PASTEBIN_API_TOKEN, "api_paste_code": log_full,
+        params = {"api_option": "paste", "api_dev_key": functions.get_settings()["secrets"]["pastebin"], "api_paste_code": log_full,
                   "api_paste_private": "1", "api_paste_expire_date": "10M"}
         paste = requests.post("https://pastebin.com/api/api_post.php", data=params).text.replace(
             "https://pastebin.com/", "https://pastebin.com/raw/")
