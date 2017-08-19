@@ -1,7 +1,7 @@
 from commands import cmd_invite
 import discord
 from os import path, mkdir
-from urils import functions
+from utils import functions
 
 
 client = None

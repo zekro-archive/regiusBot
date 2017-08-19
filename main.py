@@ -67,8 +67,8 @@ async def on_ready():
           "-------------------------------------\n\n" % (STATICS.VERSION, discord.__version__, STATICS.PREFIX, servers))
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
-    if not DEVMODE:
-        statistics.run()
+    # if not DEVMODE:
+    statistics.run()
 
 
 @client.event
