@@ -11,7 +11,7 @@ client = None
 def action():
     while not client.is_closed:
         date = strftime("%d.%m.%Y %H:%M", gmtime())
-        server = list(client.servers)[1]  # TODO: WIEDER AUF 0 SETZEN!
+        server = list(client.servers)[0]
         users = server.members
         supprole = discord.utils.get(server.roles, name="Supporter")
 

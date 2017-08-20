@@ -7,7 +7,7 @@ from discord import Game
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick, \
-    cmd_stats, cmd_user, cmd_exec
+    cmd_stats, cmd_user, cmd_exec, cmd_botmsg
 from utils import functions, level_system, statistics, userbots, report
 
 
@@ -50,6 +50,7 @@ cmdmap = {
             "user": cmd_user,
             "userinfo": cmd_user,
             "exec": cmd_exec,
+            "botmsg": cmd_botmsg,
         }
 
 
@@ -67,8 +68,8 @@ async def on_ready():
           "-------------------------------------\n\n" % (STATICS.VERSION, discord.__version__, STATICS.PREFIX, servers))
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
-    # if not DEVMODE:
-    statistics.run()
+    if not DEVMODE:
+        statistics.run()
 
 
 @client.event
@@ -84,7 +85,8 @@ async def on_member_remove(member):
 
 @client.event
 async def on_member_update(before, after):
-    await client.change_presence(game=Game(name=functions.get_members_msg(client)))
+    if not cmd_botmsg.customenabled:
+        await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     if not DEVMODE:
         await cmd_dnd.check_status(before, after, client)
         await functions.supp_add(before, after, client)
