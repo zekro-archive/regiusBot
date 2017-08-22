@@ -16,7 +16,7 @@ No, this bot is hard coded for the ["Dark Devs" Development Discord server](http
 Because this bot is only running on one guild, so the performance of Python is sufficient for the system. Also I wanted to learn Python and so I had a project for that. And Python is a language wich is very easy to use and personally for me, it's kind of more fun creating bot functions in Python.
 
 ### Can I use your code for my project(s)?
-This project is licensed with the [MIT license](https://github.com/zekroTJA/regiusBot/blob/master/LICENSE). So you are allowed to use parts of my code in your own project if you mention me. You can do this with adding my website and/or GitHub profile in your `info` command of your bot. If your bot don't such a command or something like this just mention me in the help command, in your project `Readme` or directly in your source code if it's an open source project.
+Because I get a lot of questions about that, I've created a special **[policy](http://s.zekro.de/codepolicy)** for the usage of my code.
 
 ### What functions does the bot have?
 
