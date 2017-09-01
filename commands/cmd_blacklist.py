@@ -3,6 +3,8 @@ import os
 
 description = "Blacklist people that they aren't allowed to use this bot"
 
+perm = 2
+
 
 def set_list(blacklist):
     if not os.path.isdir("SAVES"):

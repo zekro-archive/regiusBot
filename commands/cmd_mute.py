@@ -1,10 +1,11 @@
 import discord
 from os import path, makedirs, remove
 import STATICS
-from utils import perms
 
 
 ROLE_NAME = "Supporter"
+
+perm = 2
 
 description = "Mute members on guild in chat"
 
@@ -53,9 +54,7 @@ async def check_mute(message, client):
 
 
 async def ex(message, client):
-    if not perms.check(message.author):
-        await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description=("Sorry, but you need to have role `%s` to use this command!" % STATICS.PERMS_ROLE_1)))
-    elif message.content.replace(STATICS.PREFIX + "mute ", "") == "list":
+    if message.content.replace(STATICS.PREFIX + "mute ", "") == "list":
         muted_str = "\n".join([get_member(line, message.server).name for line in get_mutes(message.server)]) if len(get_mutes(message.server)) > 0 else "no one"
         await client.send_message(message.channel, embed=discord.Embed(description="**MUTED MEMBERS\n\n**" + muted_str))
     elif len(message.mentions) < 1:

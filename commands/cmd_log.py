@@ -7,6 +7,8 @@ from utils import functions
 
 description = "Show bot log"
 
+perm = 2
+
 
 async def ex(message, client):
     if not os.path.isfile("screenlog.0"):
