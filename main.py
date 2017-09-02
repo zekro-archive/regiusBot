@@ -8,7 +8,7 @@ import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick, \
     cmd_stats, cmd_user, cmd_exec, cmd_botmsg, cmd_update
-from utils import functions, level_system, statistics, userbots, report, perms
+from utils import functions, level_system, statistics, userbots, report, perms, rolechange
 
 
 # Setting up devmode when argument "-dev" entered
@@ -20,39 +20,40 @@ cmd_video.DEVMODE = DEVMODE
 STATICS.set_prefix(DEVMODE)
 STATICS.set_version()
 
+
 # Create discord client
 client = discord.Client()
 
 # Register command classes with invokes
 cmdmap = {
-            "lmgtfy": cmd_google,
-            "invite": cmd_invite,
-            "log": cmd_log,
-            "restart": cmd_restart,
-            "start": cmd_start,
-            "dev": cmd_dev,
-            "prefix": cmd_prefix,
-            "dnd": cmd_dnd,
-            "afk": cmd_dnd,
-            "github": cmd_github,
-            "git": cmd_github,
-            "say": cmd_say,
-            "test": cmd_test,
-            "pmbc": cmd_pmbc,
-            "mute": cmd_mute,
-            "xp": cmd_xp,
-            "blacklist": cmd_blacklist,
-            "stream": cmd_stream,
-            "info": cmd_info,
-            "video": cmd_video,
-            "botkick": cmd_botkick,
-            "stats": cmd_stats,
-            "user": cmd_user,
-            "userinfo": cmd_user,
-            "exec": cmd_exec,
-            "botmsg": cmd_botmsg,
-            "update": cmd_update,
-        }
+        "lmgtfy": cmd_google,
+        "invite": cmd_invite,
+        "log": cmd_log,
+        "restart": cmd_restart,
+        "start": cmd_start,
+        "dev": cmd_dev,
+        "prefix": cmd_prefix,
+        "dnd": cmd_dnd,
+        "afk": cmd_dnd,
+        "github": cmd_github,
+        "git": cmd_github,
+        "say": cmd_say,
+        "test": cmd_test,
+        "pmbc": cmd_pmbc,
+        "mute": cmd_mute,
+        "xp": cmd_xp,
+        "blacklist": cmd_blacklist,
+        "stream": cmd_stream,
+        "info": cmd_info,
+        "video": cmd_video,
+        "botkick": cmd_botkick,
+        "stats": cmd_stats,
+        "user": cmd_user,
+        "userinfo": cmd_user,
+        "exec": cmd_exec,
+        "botmsg": cmd_botmsg,
+        "update": cmd_update,
+}
 
 
 # LISTENER
@@ -64,9 +65,10 @@ async def on_ready():
           "Knecht Bot v.%s\n"
           "discord.py version: %s\n"
           "Prefix: '%s'\n"
+          "Devmode: %s\n"
           "Running on servers:\n"
           "   - %s\n"
-          "-------------------------------------\n\n" % (STATICS.VERSION, discord.__version__, STATICS.PREFIX, servers))
+          "-------------------------------------\n\n" % (STATICS.VERSION, discord.__version__, STATICS.PREFIX, "active" if DEVMODE else "inactive", servers))
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
     if not DEVMODE:
@@ -88,6 +90,9 @@ async def on_member_remove(member):
 async def on_member_update(before, after):
     if not cmd_botmsg.customenabled:
         await client.change_presence(game=Game(name=functions.get_members_msg(client)))
+        rolechange.client = client
+        await rolechange.onchange(before, after)
+
     if not DEVMODE:
         await cmd_dnd.check_status(before, after, client)
         await functions.supp_add(before, after, client)
