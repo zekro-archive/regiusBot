@@ -2,6 +2,8 @@ from discord import Embed, Color, utils
 from os import path, mkdir
 from utils import gspread_api
 
+perm = 1
+
 
 description = "Register bot prefixes running in this server"
 

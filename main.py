@@ -7,21 +7,9 @@ from discord import Game
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick, \
-    cmd_stats, cmd_user, cmd_exec, cmd_botmsg, cmd_update, cmd_gif
-from utils import functions, level_system, statistics, userbots, report, perms, rolechange, gspread_api
+    cmd_stats, cmd_user, cmd_exec, cmd_botmsg, cmd_update, cmd_gif, cmd_help
+from utils import functions, level_system, statistics, userbots, report, perms, rolechange
 
-
-g = gspread_api.Settings("dd_saves", 4)
-g.set_dict({
-    "a": "b",
-    "a2": "b",
-    "a3": "b",
-    "a4": "b",
-    "a5": "b",
-    "a6": "b",  
-})
-
-exit(0)
 
 # Setting up devmode when argument "-dev" entered
 DEVMODE = False
@@ -66,8 +54,10 @@ cmdmap = {
         "botmsg": cmd_botmsg,
         "update": cmd_update,
         "gif": cmd_gif,
+        "help": cmd_help,
 }
 
+cmd_help.CMDMAP = cmdmap
 
 # LISTENER
 
@@ -128,22 +118,18 @@ async def on_message(message):
         print(strftime("[%d.%m.%Y %H:%M:%S]", gmtime()) + " [COMMAND] \"" + message.content + "\" by " + message.author.name)
         invoke = message.content.split(" ")[0].replace(STATICS.PREFIX, "", 1)
         command_string = ""
-        if invoke == "help":
-            for s in cmdmap.keys():
-                command_string += ":white_small_square:  **" + s + "**  -  `" + cmdmap.get(s).description + "`\n"
-            await client.send_message(message.author, STATICS.helpText + command_string)
-        else:
-            cmd = cmdmap[invoke]
-            try:
-                if not perms.checklvl(message.author, cmd.perm):
-                    await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(),
-                                                                                   description="You are not permitted to use this command!\n\nRequired permission level: **%s** *(yours is %s)*" % (cmd.perm, perms.get(message.author))))
-                    return
-                else:
-                    await cmd.ex(message, client)
-            except:
+        
+        cmd = cmdmap[invoke]
+        try:
+            if not perms.checklvl(message.author, cmd.perm):
+                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(),
+                                                                               description="You are not permitted to use this command!\n\nRequired permission level: **%s** *(yours is %s)*" % (cmd.perm, perms.get(message.author))))
+                return
+            else:
                 await cmd.ex(message, client)
-                pass
+        except:
+            await cmd.ex(message, client)
+            pass
 
 
 cmd_info.cmdcount = len(cmdmap)
@@ -152,8 +138,8 @@ level_system.client = client
 
 if not DEVMODE:
     client.loop.create_task(level_system.level_to_scoreboard())
-#    client.loop.create_task(level_system.add_time_xp())
-#    client.loop.create_task(statistics.setServerStats())
+    client.loop.create_task(level_system.add_time_xp())
+    client.loop.create_task(statistics.setServerStats())
 
 level_system.client = client
 statistics.client = client
