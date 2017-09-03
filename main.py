@@ -53,6 +53,7 @@ cmdmap = {
         "exec": cmd_exec,
         "botmsg": cmd_botmsg,
         "update": cmd_update,
+        "gif": cmd_gif,
 }
 
 

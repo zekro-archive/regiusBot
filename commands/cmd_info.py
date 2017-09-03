@@ -16,7 +16,8 @@ async def ex(message, client):
     packages = ":white_small_square:   [discord.py](https://github.com/Rapptz/discord.py)\n" \
                ":white_small_square:   [request](https://pypi.python.org/pypi/requests)\n" \
                ":white_small_square:   [BeautifulSoup](https://github.com/waylan/beautifulsoup)\n" \
-               ":white_small_square:   [gspread](https://github.com/burnash/gspread)" \
+               ":white_small_square:   [gspread](https://github.com/burnash/gspread)\n" \
+               ":white_small_square:   [giphypop](https://github.com/shaunduncan/giphypop)" \
 
     em = Embed(color=Color.gold(), description="This is a discord bot running on python 3.6 wich is only concipated to work for the `DARK DEVS` server.")
     em.title = "KnechtBot v." + STATICS.VERSION
