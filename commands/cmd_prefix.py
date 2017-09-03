@@ -1,5 +1,6 @@
 from discord import Embed, Color, utils
 from os import path, mkdir
+from utils import gspread_api
 
 
 description = "Register bot prefixes running in this server"
@@ -38,22 +39,21 @@ def get_bot(botid):
 
 
 def get_saves():
-    check_path()
-    if not path.isfile(savefile):
-        return {}
+    g = gspread_api.Settings("dd_saves", 2)
+    temp = g.get_dict()
     out = {}
-    with open(savefile) as f:
-        for line in f.readlines():
-            split = line.replace("\n", "").split("|||")
-            out[get_bot(split[0])] = split[1]
+    for k, v in temp.items():
+        bot = get_bot(k)
+        if bot is not None:
+            out[bot] = v
     return out
 
 
 def save(indict):
-    check_path()
-    with open(savefile, "w") as f:
-        for k, v in indict.items():
-            f.write("%s|||%s\n" % (k.id, v))
+    g = gspread_api.Settings("dd_saves", 2)
+    g.set_dict(
+        dict([(k.id, v) for k, v in indict.items()])
+    )
 
 
 async def add(args):
