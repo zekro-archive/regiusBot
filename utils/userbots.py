@@ -1,7 +1,6 @@
 from commands import cmd_invite
 import discord
-from os import path, mkdir
-from utils import functions
+from utils import functions, gspread_api
 
 
 client = None
@@ -14,18 +13,16 @@ def _get_member(uid, server):
 
 
 def get_botlist(server):
-    botlist = {}
-    if not path.isdir("SAVES"):
-        mkdir("SAVES")
-    if path.isfile(savefile):
-        with open(savefile) as f:
-            for line in f.readlines():
-                user = _get_member(line.split(":")[1].replace("\n", ""), server)
-                bot = _get_member(line.split(":")[0], server)
-                if bot is not None and user is not None:
-                    botlist[bot] = user
-    return botlist
+    g = gspread_api.Settings("dd_saves", 3)
+    temp = g.get_dict()
+    out = {}
 
+    for k, v in temp.items():
+        bot = _get_member(k, server)
+        user = _get_member(v, server)
+        if bot is not None and user is not None:
+            out[bot] = user
+    return out
 
 
 async def joined(member, clt):
@@ -42,11 +39,11 @@ async def joined(member, clt):
 
     owner = cmd_invite.last_invite
     if owner is not None:
+        g = gspread_api.Settings("dd_saves", 3)
         botlist[member] = owner
-        with open(savefile, "w") as f:
-            for k, v in botlist.items():
-                print(k.name, v.name)
-                f.write("%s:%s\n" % (k.id, v.id))
+        g.set_dict(
+            dict([(k.id, v.id) for k, v in botlist.items()])
+        )
 
     await client.add_roles(member, discord.utils.get(member.server.roles, name="User Bots"))
     await client.change_nickname(member, "🤖 %s (%s)" % (member.name, owner.name if owner is not None else "Null"))

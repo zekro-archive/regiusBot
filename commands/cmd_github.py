@@ -1,5 +1,6 @@
 from discord import Embed, Color, utils
 from os import path, mkdir
+from utils import gspread_api
 
 
 description = "Link your github account."
@@ -37,23 +38,22 @@ def get_member(membid):
 
 
 def get_list():
-    check_path()
-    if not path.isfile(savefile):
-        return {}
+
+    g = gspread_api.Settings("dd_saves", 1)
+    temp = g.get_dict()
     out = {}
-    with open(savefile) as f:
-        for line in f.readlines():
-            memb = get_member(line.split(":::")[0])
-            if memb is not None:
-                out[memb] = line.split(":::")[1].replace("\n", "")
+    for k, v in temp.items():
+        memb = get_member(k)
+        if memb is not None:
+            out[memb] = v
     return out
 
 
 def save_list(indict):
-    check_path()
-    with open(savefile, "w") as f:
-        for k, v in indict.items():
-            f.write("%s:::%s\n" % (k.id, v))
+    g = gspread_api.Settings("dd_saves", 1)
+    g.set_dict(
+        dict([(k.id, v) for k, v in indict.items()])
+    )
 
 
 async def add(args):

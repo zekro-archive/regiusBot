@@ -1,5 +1,6 @@
 import asyncio
 from os import path, mkdir
+from utils import gspread_api
 
 import discord
 
@@ -13,26 +14,18 @@ ONLINE_TIMEOUT = 60 * 30  # (30 Minuten)
 # Speichert das Dictionary {"Member ID":xp_value} als CSV in SAVES/level.csv
 def save(table):
 
-    if not path.isdir("SAVES"):
-        mkdir("SAVES")
-
-    with open("SAVES/level.csv", "w") as f:
-        for key in table.keys():
-            f.write(key + "," + str(table[key]) + "\n")
+    g = gspread_api.Settings("dd_saves", 0)
+    g.set_dict(table)
 
 
 # Liest die SAVES/level.csv Datei und returnt die serialisierten Daten wieder
 # als Dictionary {"Member ID":xp_value}
 def get_table():
 
-    file = "SAVES/level.csv"
-    out = {}
+    g = gspread_api.Settings("dd_saves", 0)
+    temp = g.get_dict()
+    return dict([(k, int(v)) for k, v in temp.items()])
 
-    if path.isfile(file):
-        with open(file) as f:
-            for line in f.readlines():
-                out[line.split(",")[0]] = int(line.split(",")[1])
-    return out
 
 
 # Diese Funktion wird alle 30 Minuten ausgeführt und fügt jedem online Member
