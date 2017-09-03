@@ -8,8 +8,20 @@ import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick, \
     cmd_stats, cmd_user, cmd_exec, cmd_botmsg, cmd_update, cmd_gif
-from utils import functions, level_system, statistics, userbots, report, perms, rolechange
+from utils import functions, level_system, statistics, userbots, report, perms, rolechange, gspread_api
 
+
+g = gspread_api.Settings("dd_saves", 4)
+g.set_dict({
+    "a": "b",
+    "a2": "b",
+    "a3": "b",
+    "a4": "b",
+    "a5": "b",
+    "a6": "b",  
+})
+
+exit(0)
 
 # Setting up devmode when argument "-dev" entered
 DEVMODE = False
@@ -140,8 +152,8 @@ level_system.client = client
 
 if not DEVMODE:
     client.loop.create_task(level_system.level_to_scoreboard())
-    client.loop.create_task(level_system.add_time_xp())
-    client.loop.create_task(statistics.setServerStats())
+#    client.loop.create_task(level_system.add_time_xp())
+#    client.loop.create_task(statistics.setServerStats())
 
 level_system.client = client
 statistics.client = client

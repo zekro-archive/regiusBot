@@ -72,22 +72,25 @@ class Settings:
         Returns the table as dictionary.
         """
         out = {}
-        count = 1
-        while self.get_cval(1, count) != "":
-            out[self.get_cval(1, count)] = self.get_cval(2, count)
-            count += 1
+        col2 = self.t.col_values(2)
+        for i, k in enumerate(self.t.col_values(1)):
+            if k != "":
+                out[k] = col2[i]
         return out
+
 
     def set_dict(self, idict):
         """
         Sets the tables values from a given dictionary.
         """
-        count = 1
-        for k, v in idict.items():
-            self.set_cval(1, count, k)
-            self.set_cval(2, count, v)
-            count += 1
-
+        cellsA = self.t.range("A1:A" + str(len(idict.keys())))
+        cellsB = self.t.range("B1:B" + str(len(idict.keys())))
+        for i, c in enumerate(cellsA):
+            c.value = list(idict.keys())[i]
+        for i, c in enumerate(cellsB):
+            c.value = list(idict.values())[i]
+        cellsA.extend(cellsB)
+        self.t.update_cells(cellsA)
 
 
 def get_stats():
