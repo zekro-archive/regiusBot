@@ -120,7 +120,6 @@ def set_row_values(row, values, table):
     print(len(cells))
     for i, c in enumerate(cells):
         c.value = values[i]
-        print(i)
     table.update_cells(cells)
 
 
