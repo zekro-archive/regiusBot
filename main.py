@@ -103,6 +103,7 @@ async def on_member_update(before, after):
 
 @client.event
 async def on_message(message):
+    statistics.msgcount += 1
     # await cmd_dnd.test(message, client)
     await cmd_mute.check_mute(message, client)
 

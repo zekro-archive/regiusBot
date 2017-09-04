@@ -106,18 +106,30 @@ def get_stats():
 
 
 def get_next_row(table):
-    count = 1560
-    while len(table.row_values(count)[0]) > 0:
-        count += 1
-    return count
+    count = 0
+    for t in table.col_values(1):
+        if t != "":
+            count += 1
+        else:
+            return count
 
 
 def set_row_values(row, values, table):
-    for i, v in enumerate(values):
-        table.update_cell(row, i + 1, v)
+    alph = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z".split(",")
+    cells = table.range("A%d:%s%d" % (row, alph[len(values) - 1], row))
+    print(len(cells))
+    for i, c in enumerate(cells):
+        c.value = values[i]
+        print(i)
+    table.update_cells(cells)
 
 
 def append(values):
     gc = gspread.authorize(credentials)
     t = gc.open("dd_stats").sheet1
     set_row_values(get_next_row(t), values, t)
+
+
+def test():
+    append(["a", "b", "c", "d"])
+    exit(0)
