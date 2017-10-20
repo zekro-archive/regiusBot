@@ -21,7 +21,6 @@ def save(table):
 # Liest die SAVES/level.csv Datei und returnt die serialisierten Daten wieder
 # als Dictionary {"Member ID":xp_value}
 def get_table():
-
     g = gspread_api.Settings("dd_saves", 0)
     temp = g.get_dict()
     return dict([(k, int(v)) for k, v in temp.items()])
@@ -45,9 +44,7 @@ async def add_time_xp():
 
 async def level_to_scoreboard():
     await client.wait_until_ready()
-
     while not client.is_closed:
-
         d = get_table()
         table = dict([(k, d[k]) for k in sorted(d, key=d.get, reverse=True)])
         server = list(client.servers)[0]

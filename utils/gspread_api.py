@@ -72,22 +72,25 @@ class Settings:
         Returns the table as dictionary.
         """
         out = {}
-        count = 1
-        while self.get_cval(1, count) != "":
-            out[self.get_cval(1, count)] = self.get_cval(2, count)
-            count += 1
+        col2 = self.t.col_values(2)
+        for i, k in enumerate(self.t.col_values(1)):
+            if k != "":
+                out[k] = col2[i]
         return out
+
 
     def set_dict(self, idict):
         """
         Sets the tables values from a given dictionary.
         """
-        count = 1
-        for k, v in idict.items():
-            self.set_cval(1, count, k)
-            self.set_cval(2, count, v)
-            count += 1
-
+        cellsA = self.t.range("A1:A" + str(len(idict.keys())))
+        cellsB = self.t.range("B1:B" + str(len(idict.keys())))
+        for i, c in enumerate(cellsA):
+            c.value = list(idict.keys())[i]
+        for i, c in enumerate(cellsB):
+            c.value = list(idict.values())[i]
+        cellsA.extend(cellsB)
+        self.t.update_cells(cellsA)
 
 
 def get_stats():
@@ -103,18 +106,29 @@ def get_stats():
 
 
 def get_next_row(table):
-    count = 1560
-    while len(table.row_values(count)[0]) > 0:
-        count += 1
-    return count
+    count = 1
+    for t in table.col_values(1):
+        if t != "":
+            count += 1
+        else:
+            return count
 
 
 def set_row_values(row, values, table):
-    for i, v in enumerate(values):
-        table.update_cell(row, i + 1, v)
+    alph = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z".split(",")
+    cells = table.range("A%d:%s%d" % (row, alph[len(values) - 1], row))
+    print(len(cells))
+    for i, c in enumerate(cells):
+        c.value = values[i]
+    table.update_cells(cells)
 
 
 def append(values):
     gc = gspread.authorize(credentials)
     t = gc.open("dd_stats").sheet1
     set_row_values(get_next_row(t), values, t)
+
+
+def test():
+    append(["a", "b", "c", "d"])
+    exit(0)

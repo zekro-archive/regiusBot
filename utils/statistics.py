@@ -10,9 +10,12 @@ client = None
 msgid = ""
 channelid = "307085753744228356"
 
+msgcount = 0
+
 
 async def setServerStats():
     await client.wait_until_ready()
+    await asyncio.sleep(3)
     while not client.is_closed:
         global msgid
         dataset = gspread_api.get_stats()
@@ -49,7 +52,9 @@ def action():
         online = [m for m in members if not str(m.status) == "offline"]
         suppsonline = [m for m in online if supprole in m.roles]
 
-        gspread_api.append([date, len(members), len(online), len(suppsonline)])
+        global msgcount
+        gspread_api.append([date, len(members), len(online), len(suppsonline), msgcount])
+        msgcount = 0
         sleep(30 * 60)
 
 

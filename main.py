@@ -7,8 +7,9 @@ from discord import Game
 import STATICS
 from commands import cmd_start, cmd_restart, cmd_invite, cmd_google, cmd_log, cmd_dev, cmd_test, cmd_prefix, cmd_dnd, \
     cmd_github, cmd_say, cmd_pmbc, cmd_mute, cmd_xp, cmd_blacklist, cmd_stream, cmd_info, cmd_video, cmd_botkick, \
-    cmd_stats, cmd_user, cmd_exec, cmd_botmsg, cmd_update
-from utils import functions, level_system, statistics, userbots, report, perms, rolechange, gspread_api
+    cmd_stats, cmd_user, cmd_exec, cmd_botmsg, cmd_update, cmd_gif, cmd_help, cmd_repuser, cmd_userbots, cmd_getid, \
+    cmd_edit
+from utils import functions, level_system, statistics, userbots, report, perms, rolechange
 
 
 # Setting up devmode when argument "-dev" entered
@@ -54,8 +55,14 @@ cmdmap = {
         "botmsg": cmd_botmsg,
         "update": cmd_update,
         "gif": cmd_gif,
+        "help": cmd_help,
+        "rep": cmd_repuser,
+        "bots": cmd_userbots,
+        "id": cmd_getid,
+        "edit": cmd_edit
 }
 
+cmd_help.CMDMAP = cmdmap
 
 # LISTENER
 
@@ -73,6 +80,10 @@ async def on_ready():
     await client.change_presence(game=Game(name=functions.get_members_msg(client)))
     statistics.server = list(client.servers)[0]
     if not DEVMODE:
+        msgs = []
+        async for m in client.logs_from(list(client.servers)[0].get_channel("307085753744228356"), limit=2):
+            msgs.append(m)
+        await client.delete_message(msgs[0])
         statistics.run()
 
 
@@ -95,12 +106,13 @@ async def on_member_update(before, after):
         await rolechange.onchange(before, after)
 
     if not DEVMODE:
-        await cmd_dnd.check_status(before, after, client)
+        # await cmd_dnd.check_status(before, after, client)
         await functions.supp_add(before, after, client)
 
 
 @client.event
 async def on_message(message):
+    statistics.msgcount += 1
     # await cmd_dnd.test(message, client)
     await cmd_mute.check_mute(message, client)
 
@@ -112,26 +124,23 @@ async def on_message(message):
         if cmd_blacklist.check(message.author):
             await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(), description="Sorry, %s, you are blacklisted for this bot so you are not allowed to use this bots commands!" % message.author.mention))
             return
-        functions.logcmd(message)
-        print(strftime("[%d.%m.%Y %H:%M:%S]", gmtime()) + " [COMMAND] \"" + message.content + "\" by " + message.author.name)
         invoke = message.content.split(" ")[0].replace(STATICS.PREFIX, "", 1)
         command_string = ""
-        if invoke == "help":
-            for s in cmdmap.keys():
-                command_string += ":white_small_square:  **" + s + "**  -  `" + cmdmap.get(s).description + "`\n"
-            await client.send_message(message.author, STATICS.helpText + command_string)
-        else:
-            cmd = cmdmap[invoke]
-            try:
-                if not perms.checklvl(message.author, cmd.perm):
-                    await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(),
-                                                                                   description="You are not permitted to use this command!\n\nRequired permission level: **%s** *(yours is %s)*" % (cmd.perm, perms.get(message.author))))
-                    return
-                else:
-                    await cmd.ex(message, client)
-            except:
+
+        cmd = cmdmap[invoke]
+        try:
+            if not perms.checklvl(message.author, cmd.perm):
+                await client.send_message(message.channel, embed=discord.Embed(color=discord.Color.red(),
+                                                                               description="You are not permitted to use this command!\n\nRequired permission level: **%s** *(yours is %s)*" % (cmd.perm, perms.get(message.author))))
+                return
+            else:
                 await cmd.ex(message, client)
-                pass
+        except:
+            await cmd.ex(message, client)
+            pass
+
+        functions.logcmd(message)
+        print(strftime("[%d.%m.%Y %H:%M:%S]", gmtime()) + " [COMMAND] \"" + message.content + "\" by " + message.author.name)
 
 
 cmd_info.cmdcount = len(cmdmap)

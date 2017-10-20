@@ -57,10 +57,13 @@ def save(indict):
 
 
 async def add(args):
+    fetching = await message("Checking data...")
     current = get_saves()
     bot = get_bot(args[0])
     pre = args[1]
-    if bot is None:
+    if pre.startswith("=") or pre.startswith("+"):
+        await error("Please dont use a prefix staring with `=` or `+`!\n\n*This is because the bots database is running in an Google Spreadsheet wich will interpret it as function.*")
+    elif bot is None:
         await error("The bot with this ID is not registered on in this server!")
     elif bot in current.keys():
         await error("The bot %s is still registered!\nUse `!prefix edit <ID of bot> <new prefix>` to edit bots prefix!" % bot.mention)
@@ -70,14 +73,19 @@ async def add(args):
         current[bot] = pre
         save(current)
         await message("Successfully registered bot %s with prefix: ```%s```" % (bot.mention, pre), Color.green())
+    await CLIENT.delete_message(fetching)
 
 
 async def edit(args):
+    fetching = await message("Checking data...")
+
     current = get_saves()
     bot = get_bot(args[0])
     pre = args[1]
 
-    if bot is None:
+    if pre.startswith("=") or pre.startswith("+"):
+        await error("Please dont use a prefix staring with `=` or `+`!\n\n*This is because the bots database is running in an Google Spreadsheet wich will interpret it as function.*")
+    elif bot is None:
         await error("The bot with this ID is not registered on in this server!")
     elif bot not in current.keys():
         await error("The bot is not registered in this list!\nUse `!prefix add <ID of bot> <prefix>` to add your bot to the list.")
@@ -87,13 +95,15 @@ async def edit(args):
         current[bot] = pre
         save(current)
         await message("Successfully set %s's prefix to ```%s```" % (bot.mention, pre), Color.green())
+    await CLIENT.delete_message(fetching)
 
 
 async def list_all():
+    fetching = await message("Loading data...")
     current = get_saves()
 
     def _beautify(string):
-        string = string.replace("👑", "").replace("🤖", "")
+        string = string.replace("??", "").replace("??", "")
         maxlen = max([len(k.name if k.nick is None else k.nick) for k in current.keys()])
         split = string.split("  -  ")
         beautifyedleft = split[0]
@@ -105,9 +115,11 @@ async def list_all():
           "%s" \
           "```" % "\n".join([_beautify("%s  -  < %s >" % (k.name if k.nick is None else k.nick, v)) for k, v in current.items()])
     await CLIENT.send_message(CHANNEL, embed=Embed(title="PREFIX LIST", description=out))
+    await CLIENT.delete_message(fetching)
 
 
 async def removebot(args):
+    fetching = await message("Checking data...")
     current = get_saves()
     bot = get_bot(args[0])
 
@@ -119,6 +131,7 @@ async def removebot(args):
         del current[bot]
         save(current)
         await message("Bot successfully deleted from list.")
+    await CLIENT.delete_message(fetching)
 
 
 async def ex(message, client):

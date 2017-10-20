@@ -39,12 +39,11 @@ async def send_join_pm(member, client):
             user_bots += ", " + b.mention
 
     await client.send_message(member,
-                              "**Hey, " + member.name + "! Welcome on the \"DarkDevs\" Discord! :)**\n\n"
+                              "**Hey, " + member.name + "! Welcome on zekro's Dev Discord! :)**\n\n"
                               "You automatically got assigned the role `Dev` by %s, I hope ^^\n"
                               "Please now, go into the **%s** channel and type in `!dev` to get the roles witch languages you are writing in. The purpose behind that is that other users can "
                               "directly see witch languages you are familiar with and on the other side to mention the role to speak to the members in this role in the chats. Also please link your github "
-                              "profile (if existing) with the command `!github add <link or username>`.\n\n\n"
-                              "After that, you can write a little bit about yourself in channel %s. :)\n\n\n"
+                              "profile (if existing) with the command `!github add <link or username>`.\n\n"
                               "If you have some questions, look for online supporters or admins to ask for or ask the server owner (zekro) directly ;)\n\n"
                               "**Currently online supporters:**\n\n%s\n\n"
                               "Some information about the bots on this server:\n\n"
@@ -53,7 +52,7 @@ async def send_join_pm(member, client):
                               "Use command `-help` to get command list from **zekroBot** and use `!help` to get information about **me (Knecht)**.\n\n\n"
                               "Now, have a lot fun on the server! :)"
                               % (discord.utils.get(member.server.members, id="272336949841362944").mention,
-                                 discord.utils.get(member.server.channels, id="308153679716941825").mention,
+                                 discord.utils.get(member.server.channels, id="358364792614027265").mention,
                                  discord.utils.get(member.server.channels, id="309805161193406465").mention,
                                  currently_online,
                                  super_bots[2:],

@@ -37,7 +37,8 @@ async def joined(member, clt):
     if cmd_invite.last_invite is None:
         await client.send_message(discord.utils.get(member.server.channels, name="general"), embed=discord.Embed(color=discord.Color.red(), description="The currently joined bot %s can not be assinged a owner!" % member.mention))
 
-    owner = cmd_invite.last_invite
+    owner = cmd_invite.last_invite[member.id]
+
     if owner is not None:
         g = gspread_api.Settings("dd_saves", 3)
         botlist[member] = owner
@@ -46,7 +47,7 @@ async def joined(member, clt):
         )
 
     await client.add_roles(member, discord.utils.get(member.server.roles, name="User Bots"))
-    await client.change_nickname(member, "🤖 %s (%s)" % (member.name, owner.name if owner is not None else "Null"))
+    await client.change_nickname(member, "🤖 %s (%s)" % (member.name, owner.nick if owner.nick is not None else owner.name))
     invite_receivers = [discord.utils.get(member.server.members, id=uid) for uid in functions.get_settings()["roles"]["invite-receivers"]]
     for u in invite_receivers:
         await client.send_message(u, embed=discord.Embed(color=discord.Color.green(), description="Bot %s got accepted on the server." % member.mention))

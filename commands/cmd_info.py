@@ -24,7 +24,7 @@ async def ex(message, client):
     em.set_thumbnail(url=client.user.avatar_url)
     em.add_field(name="Current Version", value=STATICS.VERSION, inline=True)
     em.add_field(name="Commands", value=str(cmdcount), inline=True)
-    em.add_field(name="Copyright", value="© %s zekro Developent" % str(datetime.datetime.now().year), inline=False)
+    em.add_field(name="Copyright", value="© %s zekro Development" % str(datetime.datetime.now().year), inline=False)
     em.add_field(name="Used 3rd Party Packages", value=packages, inline=False)
     em.add_field(name="GitHub Repository", value=get_github_content(), inline=False)
     # em.add_field(name="", value="", inline=False)
