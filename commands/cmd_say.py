@@ -2,6 +2,8 @@ import STATICS
 
 description = "Say something ^^"
 
+perm = 2
+
 
 async def ex(message, client):
 

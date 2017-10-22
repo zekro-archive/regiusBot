@@ -71,4 +71,3 @@ async def check_status(before, after, client):
         if map_dnd.__contains__(after):
             map_dnd.remove(after)
             await client.send_message(channel, embed=discord.Embed(color=discord.Color.green(), description=("%s is now back again." % after.mention)))
-
