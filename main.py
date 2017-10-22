@@ -161,5 +161,6 @@ statistics.client = client
 token = functions.get_settings()["secrets"]["discord-dev"] if DEVMODE else functions.get_settings()["secrets"]["discord"]
 
 while True:
-    print("[INFO] CLIENT GOT DISCONNECTED. TRYING RESTART...")
     client.run(token)
+    client.close()
+    print("[INFO] CLIENT GOT DISCONNECTED. TRYING RESTART...")
