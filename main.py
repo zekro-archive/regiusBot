@@ -101,7 +101,10 @@ async def on_member_remove(member):
 @client.event
 async def on_member_update(before, after):
     if not cmd_botmsg.customenabled:
-        await client.change_presence(game=Game(name=functions.get_members_msg(client)))
+        try:
+            await client.change_presence(game=Game(name=functions.get_members_msg(client)))
+        except:
+            pass
         rolechange.client = client
         await rolechange.onchange(before, after)
 
