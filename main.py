@@ -151,7 +151,7 @@ cmd_info.cmdcount = len(cmdmap)
 level_system.client = client
 
 if not DEVMODE:
-    client.loop.create_task(level_system.level_to_scoreboard())
+#    client.loop.create_task(level_system.level_to_scoreboard())
     client.loop.create_task(level_system.add_time_xp())
     client.loop.create_task(statistics.setServerStats())
 
@@ -160,4 +160,6 @@ statistics.client = client
 
 token = functions.get_settings()["secrets"]["discord-dev"] if DEVMODE else functions.get_settings()["secrets"]["discord"]
 
-client.run(token)
+while True:
+    print("[INFO] CLIENT GOT DISCONNECTED. TRYING RESTART...")
+    client.run(token)
