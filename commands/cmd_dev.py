@@ -12,7 +12,7 @@ roles = []
 
 
 def get_roles():
-    return urlopen("https://pastebin.com/raw/7UE5euBg").read().__str__()[2:-1].split(", ")
+    return str(urlopen("https://pastebin.com/raw/7UE5euBg").read())[2:-1].split(", ")
 
 
 help = "**USAGE:**\n" \
@@ -35,10 +35,10 @@ async def ex(message, client):
         if args[0] == "":
             await client.send_message(message.channel, embed=discord.Embed(description=help, colour=discord.Color.red()))
             return
-        if not roles.__contains__(s):
+        if s not in roles:
             await client.send_message(message.channel, embed=discord.Embed(colour=discord.Color.red(), description=("`%s` is not a valid language role.\n"
                                                                                                                     "Available roles: `%s`"
-                                                                                                                    "\n\n*If there are other languages you want to add, please contact the server owner or admin to add the role manually.*" % (s, roles.__str__()[1:-1].replace("'", "")))))
+                                                                                                                    "\n\n*If there are other languages you want to add, please contact the server owner or admin to add the role manually.*" % (s, str(roles)[1:-1].replace("'", "")))))
             return
         for r in message.server.roles:
             if r.name.lower() == s:

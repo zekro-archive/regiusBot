@@ -1,7 +1,7 @@
 import discord
 from discord import Embed
 
-import level_system
+from utils import level_system
 
 
 description = "Show your Level or server scoreboard"
@@ -19,11 +19,24 @@ async def ex(message, client):
                                                                description=("**[LVL %s]**  `%s XP`\n```\n%s\n```" % (level, xp, progress_bar))))
 
     else:
-        table = level_system.get_table()
+        gettedtable = level_system.get_table()
+        temptable = dict([(k, gettedtable[k]) for k in sorted(gettedtable, key=gettedtable.get, reverse=True)])
+        table = {}
+        if len(temptable.keys()) <= 20:
+            table = temptable
+        else:
+            _count = 0
+            for k in temptable:
+                table[k] = temptable.get(k)
+                _count += 1
+                if _count >= 20:
+                    break
         out = ""
+        _count = 0
         for memb_id in table:
             try:
-                out += "**%s:**  **`%s XP`** \n" % (discord.utils.get(message.server.members, id=memb_id).name, table[memb_id])
+                _count += 1
+                out += "%s. - **%s:**  **`%s XP`** \n" % (_count, discord.utils.get(message.server.members, id=memb_id).name, table[memb_id])
             except:
                 pass
         await client.send_message(message.channel, "**XP LIST**\n\n" + out[:1980])

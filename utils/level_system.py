@@ -1,5 +1,6 @@
 import asyncio
 from os import path, mkdir
+from utils import gspread_api
 
 import discord
 
@@ -10,30 +11,20 @@ ONLINE_XP_VAL = 5
 ONLINE_TIMEOUT = 60 * 30  # (30 Minuten)
 
 
-
 # Speichert das Dictionary {"Member ID":xp_value} als CSV in SAVES/level.csv
 def save(table):
 
-    if not path.isdir("SAVES"):
-        mkdir("SAVES")
-
-    with open("SAVES/level.csv", "w") as f:
-        for key in table.keys():
-            f.write(key + "," + str(table[key]) + "\n")
+    g = gspread_api.Settings("dd_saves", 0)
+    g.set_dict(table)
 
 
 # Liest die SAVES/level.csv Datei und returnt die serialisierten Daten wieder
 # als Dictionary {"Member ID":xp_value}
 def get_table():
+    g = gspread_api.Settings("dd_saves", 0)
+    temp = g.get_dict()
+    return dict([(k, int(v)) for k, v in temp.items()])
 
-    file = "SAVES/level.csv"
-    out = {}
-
-    if path.isfile(file):
-        with open(file) as f:
-            for line in f.readlines():
-                out[line.split(",")[0]] = int(line.split(",")[1])
-    return out
 
 
 # Diese Funktion wird alle 30 Minuten ausgeführt und fügt jedem online Member
@@ -53,23 +44,25 @@ async def add_time_xp():
 
 async def level_to_scoreboard():
     await client.wait_until_ready()
-
     while not client.is_closed:
-
         d = get_table()
         table = dict([(k, d[k]) for k in sorted(d, key=d.get, reverse=True)])
         server = list(client.servers)[0]
 
         outstr = ":scroll:   __**SCOREBOARD**__ (Top 20)  :scroll: \n\n"
 
+        _count = 0
         for id in table:
             memb = discord.utils.get(server.members, id=id)
             if memb is not None:
+                _count += 1
                 xp = table[id]
                 lvl = str(int(xp / 1000))
                 if len(lvl) < 2:
                     lvl = "0" + lvl
-                outstr += ":white_small_square:   **[LVL %s]**    %s  -  `%s XP`\n" % (lvl, memb.name, xp)
+                outstr += "%s.  -  **[LVL %s]**    %s  -  `%s XP`\n" % (_count, lvl, memb.name, xp)
+                if _count >= 20:
+                    break
 
         try:
 
@@ -103,4 +96,3 @@ def get_xp(member):
 
 def list_xp():
     return get_table()
-

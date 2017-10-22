@@ -1,0 +1,8 @@
+#Major changes
+- disabled DnD & AFK message on mention
+- added permission system with permission levels
+
+#Minor changes
+- fixed bug in `!dev` command
+- added this cool changelog message :^)
+- fixed member count display
