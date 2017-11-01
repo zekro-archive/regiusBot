@@ -1,11 +1,10 @@
 # "KnechtBot" - Project name "regiusBot"
 
-```
-This is a "little" Python Discord bot for my development Discord server.
+<img src="http://2.bp.blogspot.com/-Z6ktIvA-CuA/TnsTL9Irk9I/AAAAAAAAAME/svk5FJ43e-c/s1600/rip.jpg" width="200">
 
-Because I'm developing a lot in this bot in my livestreams I'm getting a 
-lot of questions, so I now created a FAQ for that.
-```
+This project is dead. Because of various senseless bugs and crashed occured in last time which could not be comprehended in any way, I've decided to completely re-create this bot in Node.js. This project, named **Knecht V2**, can be found [**here**](https://github.com/zekroTJA/KnechtBot2).
+
+---
 
 ## FAQ
 
